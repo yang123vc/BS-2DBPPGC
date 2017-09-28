@@ -8,9 +8,11 @@
 
 #include "classes_BPGC.hpp"
 using namespace std;
+using namespace homogeneous;
 
 void
-read_pieces (const string &data_file_name, vector<PIEZA> &pieces)
+homogeneous::read_pieces (const string &data_file_name,
+			     vector<PIEZA> &pieces)
 {
   char cadena[128];
   ifstream p_file (data_file_name);
@@ -98,7 +100,7 @@ argmax_mod (vector<EDGES> &a)
 }
 
 bool
-equal_double (double a, double b, double prec)
+homogeneous::equal_double (double a, double b, double prec)
 {
   if (a >= b - prec && a <= b + prec)
     return true;
@@ -107,7 +109,7 @@ equal_double (double a, double b, double prec)
 }
 
 bool
-equal_pto (PUNTO a, PUNTO b)
+homogeneous::equal_pto (PUNTO a, PUNTO b)
 {
   if (equal_double (a.coordx, b.coordx, TOL)
       && equal_double (a.coordy, b.coordy, TOL))
@@ -117,7 +119,7 @@ equal_pto (PUNTO a, PUNTO b)
 }
 
 double
-distancia (PUNTO p1, PUNTO p2)
+homogeneous::distancia (PUNTO p1, PUNTO p2)
 {
   double dist;
   dist = sqrt (pow (p2.coordy - p1.coordy, 2) + pow (p2.coordx - p1.coordx, 2));
@@ -125,7 +127,7 @@ distancia (PUNTO p1, PUNTO p2)
 }
 
 int
-Position (PUNTO A, PUNTO B, PUNTO C)
+homogeneous::position (PUNTO A, PUNTO B, PUNTO C)
 {
   int pos = 100;
   double crosprod;

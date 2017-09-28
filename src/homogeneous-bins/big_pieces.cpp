@@ -7,6 +7,7 @@
 //
 
 #include "classes_BPGC.hpp"
+using namespace homogeneous;
 
 double
 calculate_rotation_match (EDGES &e1, EDGES &e2);

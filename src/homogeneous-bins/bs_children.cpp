@@ -7,13 +7,17 @@
 //
 
 #include "classes_BPGC.hpp"
+using namespace homogeneous;
 
 IRR_BIN
 ConvertToIRRBIN (NODE &bin);
+
 PIEZA
 create_convexhull_in_section (IRR_BIN &sect);
+
 PIEZA
 create_rectencl_in_section (IRR_BIN &sect);
+
 vector<PIEZA*>
 CreateList (vector<PIEZA> &item, IRR_BIN &sect, int LIST_SIZE, double thres,
 	    vector<int> ID_disp);

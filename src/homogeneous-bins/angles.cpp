@@ -7,12 +7,13 @@
 //
 
 #include "classes_BPGC.hpp"
+using namespace homogeneous;
 
 bool
 FitInSect (vector<EDGES> rp, vector<PUNTO> ptos_Sec);
 
 vector<double>
-calculateInnerAngles (vector<EDGES> &ar)
+homogeneous::calculateInnerAngles (vector<EDGES> &ar)
 {
   vector<double> angles;
   double angle;

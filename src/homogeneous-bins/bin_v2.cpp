@@ -9,74 +9,74 @@
 //Funciones asociadas a la clase BIN.
 //===================================
 void
-BIN::setID (int id)
+homogeneous::BIN::setID (int id)
 {
   ID = id;
 } //Crea el ID del bin
 
 int
-BIN::getID ()
+homogeneous::BIN::getID ()
 {
   return ID;
 } //Recupera el ID del bin
 
 double
-BIN::getL ()
+homogeneous::BIN::getL ()
 {
   return L;
 }
 
 double
-BIN::getW ()
+homogeneous::BIN::getW ()
 {
   return W;
 }
 
 void
-BIN::setWaste (PIEZA &p)
+homogeneous::BIN::setWaste (PIEZA &p)
 {
   waste = waste - p.getArea ();
 
 } //calcula el area libre
 
 double
-BIN::get_waste ()
+homogeneous::BIN::get_waste ()
 {
   return waste;
 } //Devuelve el área libre. 
 
 void
-BIN::setPropUtil ()
+homogeneous::BIN::setPropUtil ()
 {
   prop_utilizada = 1 - waste / (L * W);
 } //Calcula la proporción de bin utilizada
 
 double
-BIN::getPropUtil ()
+homogeneous::BIN::getPropUtil ()
 {
   return prop_utilizada;
 
 }
 int
-BIN::getNumPiezas ()
+homogeneous::BIN::getNumPiezas ()
 {
   return num_piezas;
 }
 
 void
-BIN::setOpen (bool op)
+homogeneous::BIN::setOpen (bool op)
 {
   bin_open = op;
 }
 
 bool
-BIN::getOpen ()
+homogeneous::BIN::getOpen ()
 {
   return bin_open;
 }
 
 void
-BIN::setDim (const string &name_sol)
+homogeneous::BIN::setDim (const string &name_sol)
 {
   char cadena[128];
   ifstream p_file (name_sol);
@@ -91,12 +91,13 @@ BIN::setDim (const string &name_sol)
 }
 
 void
-BIN::include_piece (PIEZA &p)
+homogeneous::BIN::include_piece (PIEZA &p)
 {
-  //Incluimos pieza p en el bin (i.e. aumentamos en uno el número de piezas e incluimos la pieza en el vector piezas_incluidas. 
+  // Incluimos pieza p en el bin (i.e. aumentamos en uno el número de piezas e
+  // incluimos la pieza en el vector piezas_incluidas.
   piezas_incluidas.push_back (&p);
   num_piezas++;
-  //Actualizar largo y ancho utilizado y waste;
+  // Actualizar largo y ancho utilizado y waste;
   setWaste (p);
   setPropUtil ();
   p.setbin (ID);
@@ -104,13 +105,13 @@ BIN::include_piece (PIEZA &p)
 }
 
 vector<PIEZA*> *
-BIN::getPI ()
+homogeneous::BIN::getPI ()
 {
   return (&piezas_incluidas);
 }
 
 void
-BIN::empty_bin ()
+homogeneous::BIN::empty_bin ()
 {
   num_piezas = 0;
   ID = -1;
@@ -124,7 +125,8 @@ BIN::empty_bin ()
 }
 
 void
-BIN::initialize_bin (double stock_length, double stock_width, int ID)
+homogeneous::BIN::initialize_bin (double stock_length, double stock_width,
+				     int ID)
 {
   this->ID = ID;
   this->L = stock_length;
@@ -138,20 +140,20 @@ BIN::initialize_bin (double stock_length, double stock_width, int ID)
 }
 
 void
-BIN::add_GC (EDGES e)
+homogeneous::BIN::add_GC (EDGES e)
 {
   e.mod = -1;
   GC.insert (GC.begin (), e);
 }
 
 vector<EDGES> *
-BIN::getGC ()
+homogeneous::BIN::getGC ()
 {
   return (&GC);
 }
 
 void
-BIN::add_IB (IRR_BIN &ib)
+homogeneous::BIN::add_IB (IRR_BIN &ib)
 {
   num_sect++;
   section.push_back (ib);
@@ -159,13 +161,16 @@ BIN::add_IB (IRR_BIN &ib)
 ;
 
 int
-BIN::getNumSect ()
+homogeneous::BIN::getNumSect ()
 {
   return num_sect;
 }
 
+// This function adds the pieces that are included in the irregular bin but not
+// in the section of the bin.
+//
 void
-BIN::update_section (IRR_BIN ib) //This function adds the pieces that are included in the irregular bin but not in the section of the bin.
+homogeneous::BIN::update_section (IRR_BIN ib)
 {
   vector<PIEZA*> pi = *ib.get_pzas ();	//pieces in the irregular bin
   int i = 0;
@@ -190,7 +195,7 @@ BIN::update_section (IRR_BIN ib) //This function adds the pieces that are includ
 ;
 
 void
-BIN::update_ptos_sect (IRR_BIN ib)
+homogeneous::BIN::update_ptos_sect (IRR_BIN ib)
 {
   int i = 0;
   while (ib.getID () != section[i].getID ())
@@ -207,7 +212,7 @@ BIN::update_ptos_sect (IRR_BIN ib)
 }
 
 void
-BIN::add_piece_SectToBin (IRR_BIN ib)
+homogeneous::BIN::add_piece_SectToBin (IRR_BIN ib)
 {
   vector<PIEZA*> pi = *ib.get_pzas ();	//pieces in the section of the bin
   PIEZA *last = pi.back ();
@@ -216,16 +221,17 @@ BIN::add_piece_SectToBin (IRR_BIN ib)
 
 }
 
-IRR_BIN
-BIN::get_ib (int IDib)
+homogeneous::IRR_BIN
+homogeneous::BIN::get_ib (int IDib)
 {
   int i = 0;
   while (section[i].getID () != IDib)
     i++;
   return section[i];
 }
+
 void
-BIN::FixUtil (double util)
+homogeneous::BIN::FixUtil (double util)
 {
   prop_utilizada = util;
 }
@@ -233,103 +239,105 @@ BIN::FixUtil (double util)
 //===============================================
 //Funciones asociadas a la clase IRR_BIN
 //===============================================
+
 void
-IRR_BIN::set_ID (int i)
+homogeneous::IRR_BIN::set_ID (int i)
 {
   ID = i;
 }
 int
-IRR_BIN::getID ()
+homogeneous::IRR_BIN::getID ()
 {
   return ID;
 }
 ;
 
 void
-IRR_BIN::setBin (int b)
+homogeneous::IRR_BIN::setBin (int b)
 {
   binID = b;
 }
 
 void
-IRR_BIN::setArea ()
+homogeneous::IRR_BIN::setArea ()
 {
   area_ib = calcular_area_exacta (ib_ptos);
-  //reverse ptos, dado que la función anterior está diseñada para polígonos en sentido antihorario, por lo que en este caso hace un reverse de los ptos. 
+  // reverse ptos, dado que la función anterior está diseñada para polígonos en
+  // sentido antihorario, por lo que en este caso hace un reverse de los ptos.
   std::reverse (ib_ptos.begin (), ib_ptos.end ());
-
 }
 
 double
-IRR_BIN::getArea ()
+homogeneous::IRR_BIN::getArea ()
 {
   return area_ib;
 }
 
 void
-IRR_BIN::set_waste (PIEZA &p)
+homogeneous::IRR_BIN::set_waste (PIEZA &p)
 {
   double area_p = p.getArea ();
   waste_ib = area_ib - area_p;
 }
 double
-IRR_BIN::get_waste ()
+homogeneous::IRR_BIN::get_waste ()
 {
   return waste_ib;
 }
 double
-IRR_BIN::get_prop_used ()
+homogeneous::IRR_BIN::get_prop_used ()
 {
   return prop_used;
 }
 
 void
-IRR_BIN::set_prop_used ()
+homogeneous::IRR_BIN::set_prop_used ()
 {
   prop_used = 1 - waste_ib / area_ib;
 }
 
 int
-IRR_BIN::getBin ()
+homogeneous::IRR_BIN::getBin ()
 {
   return binID;
 }
 
 void
-IRR_BIN::add_points (PUNTO &pto)
+homogeneous::IRR_BIN::add_points (PUNTO &pto)
 {
   ib_ptos.push_back (pto);
 }
 
 vector<PUNTO> *
-IRR_BIN::get_ptos ()
+homogeneous::IRR_BIN::get_ptos ()
 {
   return &ib_ptos;
 }
 ;
 
 vector<PIEZA*> *
-IRR_BIN::get_pzas ()
+homogeneous::IRR_BIN::get_pzas ()
 {
   return (&ib_pzas);
 }
 
 void
-IRR_BIN::add_GC (EDGES &e)
+homogeneous::IRR_BIN::add_GC (EDGES &e)
 {
   ib_GC.push_back (e);
 }
 
 vector<EDGES> *
-IRR_BIN::get_ibGC ()
+homogeneous::IRR_BIN::get_ibGC ()
 {
   return (&ib_GC);
 }
 
 void
-IRR_BIN::add_piece (PIEZA &pza)
+homogeneous::IRR_BIN::add_piece (PIEZA &pza)
 {
-  //Incluimos pieza p en el bin (i.e. aumentamos en uno el número de piezas e incluimos la pieza en el vector piezas_incluidas.
+  // Incluimos pieza p en el bin (i.e. aumentamos en uno el número de piezas e
+  // incluimos la pieza en el vector piezas_incluidas.
   ib_pzas.push_back (&pza);
   //Actualizar largo y ancho utilizado y waste;
   set_waste (pza);
@@ -337,7 +345,7 @@ IRR_BIN::add_piece (PIEZA &pza)
 }
 
 void
-IRR_BIN::empty_irrbin ()
+homogeneous::IRR_BIN::empty_irrbin ()
 {
   ID = -1;
   binID = -1;
@@ -349,7 +357,7 @@ IRR_BIN::empty_irrbin ()
 }
 
 vector<double>
-IRR_BIN::get_angles ()
+homogeneous::IRR_BIN::get_angles ()
 {
   vector<EDGES> ar;
   EDGES aux;
@@ -368,47 +376,3 @@ IRR_BIN::get_angles ()
   ib_angles = calculateInnerAngles (ar);
   return ib_angles;
 }
-
-////=========================================================
-////Funciones asociadas a la clase POLYGON
-////=========================================================
-//void POLYGON::setID(int p)
-//{
-//	ID = p;
-//}
-//
-//int POLYGON::getID()
-//{
-//	return ID;
-//	
-//};
-//
-//void POLYGON::clear_bp()
-//{
-//	ID = -1;
-//	bp_points.clear();
-//	
-//}
-//void POLYGON::add_points(PUNTO pt)
-//{
-//	bp_points.push_back(pt);
-//}
-//
-//vector<PUNTO> POLYGON::get_ptos()
-//{
-//	return bp_points;
-//}
-//
-//void POLYGON::set_bin(int b)
-//{
-//	bin = b;
-//}
-//
-//void POLYGON:: set_area()
-//{
-//	bp_area = calcular_area_exacta(bp_points);
-//};//Asigna el area del BP
-//
-//void add_piece(PIEZA &p);
-//void add_GC(EDGES e);
-//void include_in_bin(int bin_id);//Include pieces and guillotine cuts from the irregular bin into the bin
