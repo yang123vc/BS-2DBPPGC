@@ -9,14 +9,9 @@
 #include "classes_BPGC.hpp"
 
 void
-dibujar_nodes (vector<NODE> &bins, char *instance, char *name, double t,
-	       double L, double W, int escalado);
-
-void
-PrintSolution (const char *argv, char *instance_name, TREE &bs_sol,
-	       double runtime)
+print_solution (const string &data_file_name, const string &output_file_name,
+		double runtime, TREE &bs_sol)
 {
-
   list<NODE>::iterator it_child;
   list<NODE> tree;
   tree = bs_sol.get_tree ();
@@ -58,9 +53,11 @@ PrintSolution (const char *argv, char *instance_name, TREE &bs_sol,
 	  reverse (branch_sol.begin (), branch_sol.end ());
 	  char name[200];
 	  sprintf (name, "SOL");
-	  dibujar_nodes (branch_sol, instance_name, name, runtime,
-			 branch_sol[0].getL (), branch_sol[0].getW (), 1);
+//	  dibujar_nodes (branch_sol, instance_name, name, runtime,
+//			 branch_sol[0].getL (), branch_sol[0].getW (), 1);
 
+	  dibujar_nodes (data_file_name, output_file_name, branch_sol, runtime,
+			 branch_sol[0].getL (), branch_sol[0].getW (), 1);
 	}
       it_child--;
     }
@@ -91,8 +88,8 @@ PrintTree (const char *argv, char *instance_name, TREE &bs_sol, double runtime)
       reverse (branch_sol.begin (), branch_sol.end ());
       char name[200];
       sprintf (name, "TREE(%d)", ins);
-      dibujar_nodes (branch_sol, instance_name, name, runtime,
-		     branch_sol[0].getL (), branch_sol[0].getW (), 1);
+//      dibujar_nodes (branch_sol, instance_name, name, runtime,
+//		     branch_sol[0].getL (), branch_sol[0].getW (), 1);
       it_child--;
 
     }

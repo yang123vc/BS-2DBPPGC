@@ -456,22 +456,21 @@ redondear_numero_dos_cifras (double n)
   return num;
 }
 
+//(vector<NODE> &node, char *instance, char *name, double t,
+//	       double L, double W, int escalado)
+
 void
-dibujar_nodes (vector<NODE> &node, char *instance, char *name, double t,
-	       double L, double W, int escalado)
+dibujar_nodes (const string &data_file_name, const string &output_file_name,
+	       vector<NODE> &node, double runtime, double L, double W,
+	       int escalado)
 {
-  char filename[80];
   FILE *p_file;
 
-  char name_inst[100];
-  //sprintf (name_inst,"_tikzpicture_iter_%d.tex",p_datos->iter);
-  sprintf (name_inst, "_%s.tex", instance);
-  strcpy (filename, name);
-  strcat (filename, name_inst);
-
-  if ((p_file = fopen (filename, "w")) == NULL) /*  abre el fichero .txt  */
+  // abre el fichero .txt
+  //
+  if ((p_file = fopen (output_file_name.c_str (), "w")) == NULL)
     {
-      printf ("Error in file %s\n", filename);
+      printf ("Error in file %s\n", output_file_name);
       exit (1);
     }
 
@@ -639,7 +638,7 @@ dibujar_nodes (vector<NODE> &node, char *instance, char *name, double t,
   sprintf (
       cadena,
       "\\noindent Instance name: $%s$, \n \n \\noindent Running Time: %.3f secs",
-      instance, t);
+      data_file_name, runtime);
   fprintf (p_file, "%s \n", cadena);
   cadena[0] = '\0';
   sprintf (cadena,
@@ -880,5 +879,4 @@ dibujar_nodes (vector<NODE> &node, char *instance, char *name, double t,
 
   fclose (p_file);
   return;
-
 }

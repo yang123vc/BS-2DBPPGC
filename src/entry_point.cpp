@@ -1,24 +1,14 @@
 /*
- * entry_point_2.hpp
+ * entry_point.cpp
  *
- *  Created on: Sep 19, 2017
- *      Author: calegria
+ *  Created on: Sep 28, 2017
+ *      Author: Carlos Alegría Galicia
  */
 
-#ifndef HOMOGENEOUS_BINS_ENTRY_POINT_HPP_
-#define HOMOGENEOUS_BINS_ENTRY_POINT_HPP_
+#include "entry_point.hpp"
+#include "homogeneous-bins/classes_BPGC.hpp"
 
-#include <string>
-#include <vector>
-#include <numeric>
-using namespace std;
-
-#include <chrono>
-using chrono::high_resolution_clock;
-
-#include "classes_BPGC.hpp"
-
-void
+result &
 beam_search (const string &data_file_name, double stock_length,
 	     double stock_width)
 {
@@ -41,11 +31,11 @@ beam_search (const string &data_file_name, double stock_length,
   // constructing solution
   //
 
-  TREE bs_sol;
+  result *bs_result = new result;
 
   high_resolution_clock::time_point time = high_resolution_clock::now ();
-  bs_sol.build_solution (stock_length, stock_width, pieces);
-  auto runtime = chrono::duration_cast<chrono::seconds> (
+  bs_result->solution.build_solution (stock_length, stock_width, pieces);
+  bs_result->runtime = chrono::duration_cast<chrono::seconds> (
       high_resolution_clock::now () - time).count ();
 
 
@@ -54,19 +44,19 @@ beam_search (const string &data_file_name, double stock_length,
   //
 
   list<NODE>::iterator last_node;
-  list<NODE> tree = bs_sol.get_tree ();
+  list<NODE> tree = bs_result->solution.get_tree ();
   last_node = tree.end ();
   last_node--;
   //Calculate area of the bin
   double AreaBin = last_node->getL () * last_node->getW ();
-  int last_level = last_node->get_level ();
   double Residual = GRANDE;
+  bs_result->bins = last_node->get_level ();
 
   // When OF is Fractional Number of bins, we want the branch with less
   // utilization on the last bin.
   //
   int bestID = -1;
-  while (last_node->get_level () == last_level)
+  while (last_node->get_level () == bs_result->bins)
     {
       if (last_node->get_IDdisp ().empty ())
 	{
@@ -83,7 +73,7 @@ beam_search (const string &data_file_name, double stock_length,
   //
   last_node = tree.end ();
   last_node--;
-  while (last_node->get_level () == last_level)
+  while (last_node->get_level () == bs_result->bins)
     {
       if (last_node->get_IDdisp ().empty () && last_node->getID () == bestID)
 	{
@@ -94,22 +84,11 @@ beam_search (const string &data_file_name, double stock_length,
 
   // Total % Utilization: Calculated as in the Omega Paper:
   //
-  double utilization = accumulate (pieces.begin (), pieces.end (), 0,
+  bs_result->utilization = accumulate (pieces.begin (), pieces.end (), 0,
 				   [](double a, PIEZA &b)
 				     { return a + b.getArea();});
-  utilization /= ((last_level - 1 + Residual) * AreaBin);
-  double Frac_N_Bins = last_level - 1 + Residual;
+  bs_result->utilization /= ((bs_result->bins - 1 + Residual) * AreaBin);
+  bs_result->frac_bins = bs_result->bins - 1 + Residual;
 
-
-  //
-  // printing results
-  //
-
-  cout << "Results " << string(80, '=') << endl;
-  cout << "Number of bins: " << last_level << endl;
-  cout << "Number of Bins (fractional): " << Frac_N_Bins << endl;
-  cout << "Utilization (%): " << utilization << endl;
-  cout << "Running time (miliseconds): " << runtime << endl;
+  return *bs_result;
 }
-
-#endif /* HOMOGENEOUS_BINS_ENTRY_POINT_HPP_ */

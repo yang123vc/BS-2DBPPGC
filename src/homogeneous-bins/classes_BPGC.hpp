@@ -537,6 +537,15 @@ public:
 void
 read_pieces (const string &data_file_name, vector<PIEZA> &pieces);
 
+void
+print_solution (const string &data_file_name, const string &output_file_name,
+		double runtime, TREE &bs_sol);
+
+void
+dibujar_nodes (const string &data_file_name, const string &output_file_name,
+	       vector<NODE> &node, double runtime, double L, double W,
+	       int escalado);
+
 extern int
 argmax_mod (vector<EDGES> &a);
 extern bool

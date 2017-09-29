@@ -11,16 +11,18 @@
 namespace po = boost::program_options;
 namespace fs = boost::filesystem;
 
-#include <iostream>
-#include <fstream>
 #include <cstdlib>
+
+#include <iostream>
+#include <iomanip>
+#include <fstream>
 #include <utility>
 #include <string>
 #include <vector>
 #include <unordered_map>
 using namespace std;
 
-#include "homogeneous-bins/entry_point.hpp"
+#include "entry_point.hpp"
 
 // the help command-line option
 //
@@ -46,6 +48,20 @@ using namespace std;
 #define OP_DATA "data"
 #define OPS_DATA "d"
 
+// the *.tex output filename
+//
+#define OP_OUTPUT  "output"
+#define OPS_OUTPUT "o"
+
+// flag indicating whether to print verbose messages or not
+//
+#define OP_VERBOSE  "verbose"
+#define OPS_VERBOSE "v"
+
+// the text width when writing text to console
+//
+#define TEXT_WIDTH 80
+
 //
 //
 int
@@ -58,6 +74,7 @@ main (int argc, const char **argv)
   int filter_width;
   int beam_width;
   string data_file_name;
+  string output_file_name;
   unordered_map<string, pair<double, double>> stock;
 
   po::options_description options ("Available options");
@@ -71,6 +88,9 @@ main (int argc, const char **argv)
 	  "The beam width of the beam search algorithm")
       (OP_DATA "," OPS_DATA, po::value<string> (&data_file_name),
 	  "The *.dat name of the file containing the input pieces information")
+      (OP_OUTPUT "," OPS_OUTPUT, po::value<string> (&output_file_name),
+	  "The *.tex name of the file where the resulting packing will be drawn")
+      (OP_VERBOSE "," OPS_VERBOSE, "Print verbose messages")
       (OP_BINS, po::value<vector<string>>(),
 	  "The length and width of the stock bins. If there are two strings "
 	  "'<L> <W>' they are considered to be numeric values, and then the "
@@ -96,8 +116,8 @@ main (int argc, const char **argv)
 
       auto error = [&](const string &msg)
 	{
-	  cout << msg << endl
-	  << options << endl;
+	  cout << msg << endl;
+	  cout << options << endl;
 	  exit (EXIT_SUCCESS);
 	};
 
@@ -135,6 +155,19 @@ main (int argc, const char **argv)
 	{
 	  error ("option --" OP_DATA
 		 " should point to an existing regular file");
+	}
+
+
+      //
+      // check data option (optional, string should be path pointing to a file)
+      //
+
+      if (vm.count (OP_OUTPUT))
+	{
+	  if (fs::native (output_file_name))
+	    {
+	      error ("option --" OP_OUTPUT " should be a valid file name");
+	    }
 	}
 
 
@@ -181,12 +214,66 @@ main (int argc, const char **argv)
 	  double length = boost::lexical_cast<double> (bins[0]);
 	  double width = boost::lexical_cast<double> (bins[1]);
 
-	  cout << "calling homogeneous beam search on instance " << "\""
-	      << data_file_name << "\" " << "using stock bins with "
-	      << "length = " << length << " and " << "width = " << width
-	      << endl;
+	  if (vm.count (OP_VERBOSE))
+	    {
+	      cout << "calling homogeneous beam search:" << endl;
 
-	  beam_search (data_file_name, length, width);
+	      cout << left << setw(20) << "instance: ";
+	      cout << "\"" << data_file_name << "\" " << endl;
+
+	      cout << left << setw(20) << "stock bins length:";
+	      cout << width << endl;
+
+	      cout << left << setw(20) << "stock bins width:";
+	      cout << length << endl << endl;
+	    }
+
+	  result &bs_result = beam_search (data_file_name, length, width);
+
+	  //
+	  // printing results to console
+	  //
+
+	  if (vm.count(OP_VERBOSE))
+	    {
+	      cout << "results:" << endl;
+
+	      cout << left << setw(30) << "number of bins:";
+	      cout << bs_result.bins << endl;
+
+	      cout << left << setw(30) << "number of Bins (fractional):";
+	      cout << bs_result.frac_bins << endl;
+
+	      cout << left << setw(30) << "Utilization (%):";
+	      cout << bs_result.utilization << endl;
+
+	      cout << left << setw(30) << "Running time (seconds):";
+	      cout << bs_result.runtime << endl;
+	    }
+	  else
+	    {
+	      streamsize p = cout.precision();
+	      cout.precision(5);
+
+	      cout << left << setw(15) << fs::path(data_file_name).filename().string();
+	      cout << left << setw(10) << bs_result.bins;
+	      cout << left << setw(10) << bs_result.frac_bins;
+	      cout << left << setw(10) << bs_result.utilization;
+	      cout << left << setw(10) << bs_result.runtime;
+	      cout << endl;
+
+	      cout.precision(p);
+	    }
+
+	  //
+	  // printing results to *.tex
+	  //
+
+	  if (vm.count (OP_OUTPUT))
+	    {
+	      print_solution (data_file_name, output_file_name,
+			      bs_result.runtime, bs_result.solution);
+	    }
 	}
       else
 	{
@@ -216,15 +303,23 @@ main (int argc, const char **argv)
 	      stock[name] = std::make_pair (length, width);
 	    }
 
-	  cout << "calling heterogeneous beam search on instance " << "\""
-	      << data_file_name << "\" " << "using stock bins:" << endl;
-
-	  for_each (stock.begin (), stock.end (), [](auto &el)
+	  if (vm.count (OP_VERBOSE))
 	    {
-	      cout << el.first << " = "
-	      << el.second.first << ", "
-	      << el.second.second << endl;
-	    });
+	      cout << "calling heterogeneous beam search:" << endl;
+
+	      cout << left << setw(12) << "instance: ";
+	      cout << "\"" << data_file_name << "\" " << endl;
+
+	      cout << "stock bins:" << endl;
+	      for_each (stock.begin (), stock.end (), [](auto &el)
+		{
+		  cout << right << setw(19) << "label: "<< left << setw(10)
+		      << el.first;
+		  cout << "length: " << left << setw(15) << el.second.first;
+		  cout << "width: " << left << setw(15) << el.second.second
+		      << endl;
+		});
+	    }
 	}
     }
   catch (std::exception& e)
