@@ -8,10 +8,10 @@
  */
 
 #include "IRR_BIN.hpp"
-#include "helpers.hpp"
-
 #include <vector>
 #include <iostream>
+
+#include "help_functions.hpp"
 using namespace std;
 
 namespace homogeneous_bs

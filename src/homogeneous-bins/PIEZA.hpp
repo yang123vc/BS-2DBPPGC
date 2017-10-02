@@ -8,15 +8,17 @@
  *      Author: Carlos Alegría Galicia
  */
 
-#ifndef HOMOGENEOUS_BINS_PIEZA_HPP_
-#define HOMOGENEOUS_BINS_PIEZA_HPP_
+#ifndef HOMOGENEOUS_BS_PIEZA_HPP_
+#define HOMOGENEOUS_BS_PIEZA_HPP_
+
+#include "PUNTO.hpp"
+#include "EDGES.hpp"
+#include "help_constants.hpp"
 
 #include <iostream>
 #include <vector>
 using namespace std;
 
-#include "PUNTO.hpp"
-#include "EDGES.hpp"
 
 namespace homogeneous_bs
 {
@@ -94,12 +96,12 @@ namespace homogeneous_bs
 
   public:
 
-    inline void
+    void
     setID (int id)
     {
       this->ID = id;
     }
-    inline int
+    int
     getID ()
     {
       return this->ID;
@@ -107,7 +109,7 @@ namespace homogeneous_bs
 
     // asigna el id del bin en el que está la pieza
     //
-    inline void
+    void
     setbin (int bin_id)
     {
       this->bin = bin_id;
@@ -115,7 +117,7 @@ namespace homogeneous_bs
 
     // Obtiene el ID del bin en el que está la pieza
     //
-    inline int
+    int
     getBIN ()
     {
       return this->bin;
@@ -123,7 +125,7 @@ namespace homogeneous_bs
 
     // añade los puntos de la pieza
     //
-    inline void
+    void
     add_point (PUNTO p)
     {
       this->puntos_angulo_inicial.push_back (p);
@@ -131,49 +133,49 @@ namespace homogeneous_bs
 
     // Gets the number of vertices of the piece.
     //
-    inline int
+    int
     get_noVert ()
     {
       return no_vertices;
     }
 
-    inline void
+    void
     setCoord (PUNTO p)
     {
       this->coord = p;
     }
-    inline PUNTO
+    PUNTO
     getCoord ()
     {
       return this->coord;
     }
 
-    inline double
+    double
     getl ()
     {
       return this->largo;
     }
-    inline double
+    double
     getw ()
     {
       return this->ancho;
     }
-    inline double
+    double
     getArea ()
     {
       return this->area;
     }
-    inline double
+    double
     get_angulo_usado ()
     {
       return this->angulo_usado;
     }
-    inline vector<double>
+    vector<double>
     get_angles ()
     {
-      this->angulos_pieza;
+      return this->angulos_pieza;
     }
-    inline vector<EDGES> *
+    vector<EDGES> *
     getEdges ()
     {
       return (&aristas);
@@ -184,7 +186,7 @@ namespace homogeneous_bs
 
     // Borra todos los puntos de la pieza para poder iniciar otra.
     //
-    inline void
+    void
     clear_points ()
     {
       this->puntos_angulo_inicial.clear ();
@@ -195,17 +197,17 @@ namespace homogeneous_bs
     void
     initialize_piece ();
 
-    inline vector<PUNTO> *
+    vector<PUNTO> *
     obtener_puntos ()
     {
       return &puntos_angulo_usado;
     }
-    inline void
+    void
     set_ptos_diag_rot ()
     {
       this->puntos_diagonal_base = this->puntos_angulo_usado;
     }
-    inline vector<PUNTO>
+    vector<PUNTO>
     get_ptos_diag_rot ()
     {
       return this->puntos_diagonal_base;
@@ -227,7 +229,7 @@ namespace homogeneous_bs
 
     // Obiene el valor de mirror.
     //
-    inline bool
+    bool
     get_mirror ()
     {
       return this->mirror;
@@ -241,7 +243,7 @@ namespace homogeneous_bs
 
     // Checa si la pieza entra en el rectángulo del bin.
     //
-    inline bool
+    bool
     Fits_Bin (double L, double W)
     {
       if (largo < L + TOL && ancho < W + TOL)
@@ -254,13 +256,13 @@ namespace homogeneous_bs
     //
     void
     setbase (vector<EDGES> aristas);
-    inline double
+    double
     getbase ()
     {
       return this->base;
     }
 
-    inline void
+    void
     set_placed (int b)
     {
       if (b < 0)
@@ -268,7 +270,7 @@ namespace homogeneous_bs
       else
 	placed = true;
     }
-    inline bool
+    bool
     is_placed ()
     {
       return this->placed;
@@ -277,4 +279,4 @@ namespace homogeneous_bs
 
 } /* namespace homogeneous_bs */
 
-#endif /* HOMOGENEOUS_BINS_PIEZA_HPP_ */
+#endif /* HOMOGENEOUS_BS_PIEZA_HPP_ */

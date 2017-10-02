@@ -8,8 +8,8 @@
  *      Author: Carlos Alegría Galicia
  */
 
-#ifndef HOMOGENEOUS_BINS_PUNTO_HPP_
-#define HOMOGENEOUS_BINS_PUNTO_HPP_
+#ifndef HOMOGENEOUS_BS_PUNTO_HPP_
+#define HOMOGENEOUS_BS_PUNTO_HPP_
 
 namespace homogeneous_bs
 {
@@ -23,4 +23,4 @@ namespace homogeneous_bs
 
 } /* namespace homogeneous_bs */
 
-#endif /* HOMOGENEOUS_BINS_PUNTO_HPP_ */
+#endif /* HOMOGENEOUS_BS_PUNTO_HPP_ */

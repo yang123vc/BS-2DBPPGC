@@ -8,8 +8,8 @@
  *      Author: Carlos Alegría Galicia
  */
 
-#ifndef HOMOGENEOUS_BINS_GE_COMP_HPP_
-#define HOMOGENEOUS_BINS_GE_COMP_HPP_
+#ifndef HOMOGENEOUS_BS_GE_COMP_HPP_
+#define HOMOGENEOUS_BS_GE_COMP_HPP_
 
 namespace homogeneous_bs
 {
@@ -20,6 +20,6 @@ namespace homogeneous_bs
     double fractional_util;
     double prop_used_current_bin;
   };
-} /* namespace homogeneous */
+} /* namespace homogeneous_bs */
 
-#endif /* HOMOGENEOUS_BINS_GE_COMP_HPP_ */
+#endif /* HOMOGENEOUS_BS_GE_COMP_HPP_ */

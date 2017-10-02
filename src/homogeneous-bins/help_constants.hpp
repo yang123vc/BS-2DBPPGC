@@ -1,15 +1,12 @@
 /*
- * helpers.hpp
+ * constants.hpp
  *
- *  Constants and global functions from classes_BPGC.hpp (BS-4-2DBPPGC, commit:
- *  a1cab62) file, created by Marta Cabo Nodar on 16/10/14.
- *
- *  Created on: Sep 27, 2017
+ *  Created on: Sep 30, 2017
  *      Author: Carlos Alegría Galicia
  */
 
-#ifndef HOMOGENEOUS_BINS_HELPERS_HPP_
-#define HOMOGENEOUS_BINS_HELPERS_HPP_
+#ifndef HOMOGENEOUS_BS_HELP_CONSTANTS_HPP_
+#define HOMOGENEOUS_BS_HELP_CONSTANTS_HPP_
 
 #define GRANDE 999999
 #define PI 3.14159265358979323846
@@ -49,31 +46,5 @@
 //
 #define PARAM_LAST_BIN 0.05
 
-#include <vector>
-using namespace std;
 
-#include "IRR_BIN.hpp"
-#include "EDGES.hpp"
-#include "PUNTO.hpp"
-#include "PIEZA.hpp"
-
-namespace homogeneous_bs
-{
-  vector<double>
-  calculateInnerAngles (vector<EDGES> &);
-
-  double
-  calcular_area_exacta (vector<PUNTO> &poligono);
-
-  PIEZA
-  create_convexhull_in_section (IRR_BIN &sect);
-
-  vector<PUNTO>
-  convex_hull (vector<PUNTO> P);
-
-  bool
-  equal_double (double a, double b, double prec);
-
-} /* namespace homogeneous_bs */
-
-#endif /* HOMOGENEOUS_BINS_HELPERS_HPP_ */
+#endif /* HOMOGENEOUS_BINS_HELP_CONSTANTS_HPP_ */

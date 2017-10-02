@@ -9,6 +9,7 @@
 
 #include "BIN.hpp"
 
+#include <vector>
 #include <string>
 #include <fstream>
 using namespace std;
@@ -77,7 +78,7 @@ namespace homogeneous_bs
   void
   BIN::update_section (IRR_BIN ib)
   {
-    vector<PIEZA*> pi = *ib.get_pzas (); // pieces in the irregular bin
+    vector<PIEZA*> pi = *ib.get_pzas(); // pieces in the irregular bin
     int i = 0;
     while (ib.getID () != section[i].getID ())
       i++;	//We are now in the section of the bin that correspond to ib.

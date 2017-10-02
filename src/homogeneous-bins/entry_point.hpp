@@ -8,6 +8,11 @@
 #ifndef HOMOGENEOUS_BINS_ENTRY_POINT_HPP_
 #define HOMOGENEOUS_BINS_ENTRY_POINT_HPP_
 
+#include "help_functions.hpp"
+#include "PIEZA.hpp"
+#include "TREE.hpp"
+using namespace homogeneous_bs;
+
 #include <string>
 #include <vector>
 #include <numeric>
@@ -15,8 +20,6 @@ using namespace std;
 
 #include <chrono>
 using chrono::high_resolution_clock;
-
-#include "classes_BPGC.hpp"
 
 void
 beam_search (const string &data_file_name, double stock_length,

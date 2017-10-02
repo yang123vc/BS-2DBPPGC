@@ -5,10 +5,11 @@
  *      Author: Carlos Alegría Galicia
  */
 
-#ifndef HOMOGENEOUS_BINS_NODE_HPP_
-#define HOMOGENEOUS_BINS_NODE_HPP_
+#ifndef HOMOGENEOUS_BS_NODE_HPP_
+#define HOMOGENEOUS_BS_NODE_HPP_
 
 #include "PIEZA.hpp"
+#include "EDGES.hpp"
 #include "IRR_BIN.hpp"
 
 #include <string>
@@ -69,14 +70,14 @@ namespace homogeneous_bs
 
     // crea el ID del bin
     //
-    inline void
+    void
     setID (int id)
     {
       this->ID = id;
     }
     // recupera el ID del bin
     //
-    inline int
+    int
     getID ()
     {
       return this->ID;
@@ -85,12 +86,12 @@ namespace homogeneous_bs
     void
     setDim (const string &name); //Asigna largo y ancho del bin
 
-    inline double
+    double
     getL ()
     {
       return this->L;
     }
-    inline double
+    double
     getW ()
     {
       return this->W;
@@ -98,23 +99,23 @@ namespace homogeneous_bs
 
     // calcula el area libre
     //
-    inline void
+    void
     setWaste (PIEZA &p)
     {
       waste = waste - p.getArea ();
     }
-    inline double
+    double
     get_waste ()
     {
       return waste;
     }
 
-    inline void
+    void
     setOpen (bool op)
     {
       bin_open = op;
     }
-    inline bool
+    bool
     getOpen ()
     {
       return bin_open;
@@ -122,18 +123,18 @@ namespace homogeneous_bs
 
     // Calcula la proporción utilizada
     //
-    inline void
+    void
     setPropUtil ()
     {
       prop_utilizada = 1 - waste / (L * W);
     }
-    inline double
+    double
     getPropUtil ()
     {
       return prop_utilizada;
     }
 
-    inline int
+    int
     getNumPiezas ()
     {
       return num_piezas;
@@ -144,19 +145,19 @@ namespace homogeneous_bs
     void
     include_piece (PIEZA p);
 
-    inline void
+    void
     add_GC (EDGES e)
     {
       e.mod = -1;
       GC.insert (GC.begin (), e);
     }
-    inline vector<EDGES> *
+    vector<EDGES> *
     getGC ()
     {
       return (&GC);
     }
 
-    inline vector<PIEZA*>
+    vector<PIEZA*>
     getPI ()
     {
       vector<PIEZA*> p;
@@ -168,19 +169,19 @@ namespace homogeneous_bs
     void
     empty_bin ();
 
-    inline void
+    void
     add_IB (IRR_BIN &ib)
     {
       num_sect++;
       section.push_back (ib);
     }
 
-    inline int
+    int
     getNumSect ()
     {
       return num_sect;
     }
-    inline IRR_BIN
+    IRR_BIN
     get_ib (int IDib)
     {
       int i = 0;
@@ -210,7 +211,7 @@ namespace homogeneous_bs
     {
       predecessor = &pred;
     }
-    inline NODE *
+    NODE *
     get_Pred ()
     {
       return predecessor;
@@ -226,33 +227,32 @@ namespace homogeneous_bs
 	}
     }
 
-    inline void
+    void
     update_pzas_disp (int ID)
     {
-      for (int i = 0; i < pz.size (); i++)
-	{
-	  if (!pz[i].is_placed ())
-	    ID_pzas_disp.push_back (pz[i].getID ());
-	}
+      int pos = 0;
+      while (pos < ID_pzas_disp.size () && ID_pzas_disp[pos] != ID)
+	pos++;
+      ID_pzas_disp.erase (ID_pzas_disp.begin () + pos);
     }
-    inline vector<int>
+    vector<int>
     get_IDdisp ()
     {
       return ID_pzas_disp;
     }
 
-    inline void
+    void
     set_level (int level)
     {
       this->level = level;
     }
-    inline int
+    int
     get_level ()
     {
       return this->level;
     }
 
-    inline void
+    void
     set_globaleval (double of)
     {
       this->global_eval = of;
@@ -278,4 +278,4 @@ namespace homogeneous_bs
 
 } /* namespace homogeneous_bs */
 
-#endif /* HOMOGENEOUS_BINS_NODE_HPP_ */
+#endif /* HOMOGENEOUS_BS_NODE_HPP_ */

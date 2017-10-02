@@ -7,12 +7,13 @@
  *      Author: Carlos Alegría Galicia
  */
 
+#include "PIEZA.hpp"
+#include "help_functions.hpp"
+
 #include <cstdio>
+#include <cmath>
 #include <algorithm>
 using namespace std;
-
-#include "PIEZA.hpp"
-#include "helpers.hpp"
 
 namespace homogeneous_bs
 {
@@ -65,8 +66,8 @@ namespace homogeneous_bs
 	puntos_angulo_inicial[i].coordx -= minX;
 	puntos_angulo_inicial[i].coordy -= minY;
       }
-    Coord.coordx = 0.0;
-    Coord.coordy = 0.0;
+    coord.coordx = 0.0;
+    coord.coordy = 0.0;
 
     // Calcula las aristas de las piezas como vectores dando el pto inicial y
     // el final. Las guarda en el vector aristas de la pieza en sentido
@@ -228,8 +229,8 @@ namespace homogeneous_bs
 	puntos_angulo_usado[i].coordx += x;
 	puntos_angulo_usado[i].coordy += y;
       }
-    Coord.coordx += x;
-    Coord.coordy += y;
+    coord.coordx += x;
+    coord.coordy += y;
     ini_edges ();
   }
 

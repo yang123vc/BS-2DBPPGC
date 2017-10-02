@@ -8,8 +8,8 @@
  *      Author: Carlos Alegría Galicia
  */
 
-#ifndef HOMOGENEOUS_BINS_BIN_HPP_
-#define HOMOGENEOUS_BINS_BIN_HPP_
+#ifndef HOMOGENEOUS_BS_BIN_HPP_
+#define HOMOGENEOUS_BS_BIN_HPP_
 
 #include "PIEZA.hpp"
 #include "EDGES.hpp"
@@ -206,4 +206,4 @@ namespace homogeneous_bs
 
 } /* namespace homogeneous_bs */
 
-#endif /* HOMOGENEOUS_BINS_BIN_HPP_ */
+#endif /* HOMOGENEOUS_BS_BIN_HPP_ */

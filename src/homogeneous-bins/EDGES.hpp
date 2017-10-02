@@ -8,8 +8,8 @@
  *      Author: Carlos Alegría Galicia
  */
 
-#ifndef HOMOGENEOUS_BINS_EDGES_HPP_
-#define HOMOGENEOUS_BINS_EDGES_HPP_
+#ifndef HOMOGENEOUS_BS_EDGES_HPP_
+#define HOMOGENEOUS_BS_EDGES_HPP_
 
 #include "PUNTO.hpp"
 
@@ -21,7 +21,7 @@ namespace homogeneous_bs
   public:
     PUNTO ini;
     PUNTO fin;
-    double mod; //Stores the lenght of the edge.
+    double mod; //Stores the length of the edge.
 
     void
     set_mod ();
@@ -29,4 +29,4 @@ namespace homogeneous_bs
 
 } /* namespace homogeneous_bs */
 
-#endif /* HOMOGENEOUS_BINS_EDGES_HPP_ */
+#endif /* HOMOGENEOUS_BS_EDGES_HPP_ */

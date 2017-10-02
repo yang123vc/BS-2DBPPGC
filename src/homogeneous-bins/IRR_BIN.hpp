@@ -8,17 +8,16 @@
  *      Author: Carlos Alegría Galicia
  */
 
-#ifndef HOMOGENEOUS_BINS_IRR_BIN_HPP_
-#define HOMOGENEOUS_BINS_IRR_BIN_HPP_
+#ifndef HOMOGENEOUS_BS_IRR_BIN_HPP_
+#define HOMOGENEOUS_BS_IRR_BIN_HPP_
 
 #include "PUNTO.hpp"
 #include "PIEZA.hpp"
 #include "EDGES.hpp"
-#include "helpers.hpp"
-
 #include <vector>
-#include <iostream>
 #include <algorithm>
+
+#include "help_functions.hpp"
 using namespace std;
 
 namespace homogeneous_bs
@@ -80,7 +79,10 @@ namespace homogeneous_bs
       this->binID = bin_id;
     }
     int
-    getBin (); //Returns the value of binID;
+    getBin ()
+    {
+      return this->binID;
+    }
 
     inline void
     setArea ()
@@ -123,7 +125,7 @@ namespace homogeneous_bs
     empty_irrbin ();
 
     inline void
-    add_piece (PIEZA &p)
+    add_piece (PIEZA &pza)
     {
       // Incluimos pieza p en el bin (i.e. aumentamos en uno el número de piezas
       // e incluimos la pieza en el vector piezas_incluidas.
@@ -150,7 +152,7 @@ namespace homogeneous_bs
     {
       return &ib_ptos;
     }
-    inline vector<PIEZA*> *
+    inline vector<PIEZA *> *
     get_pzas ()
     {
       return (&ib_pzas);
@@ -164,4 +166,4 @@ namespace homogeneous_bs
 
 } /* namespace homogeneous_bs */
 
-#endif /* HOMOGENEOUS_BINS_IRR_BIN_HPP_ */
+#endif /* HOMOGENEOUS_BS_IRR_BIN_HPP_ */
