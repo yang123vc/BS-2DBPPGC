@@ -16,19 +16,24 @@ using namespace std;
 #include <chrono>
 using chrono::high_resolution_clock;
 
-#include "homogeneous-bins/classes_BPGC.hpp"
+#include "homogeneous-bins/TREE.hpp"
 
-typedef struct {
-  int bins;
-  double frac_bins;
-  double utilization;
-  chrono::seconds::rep runtime;
-  TREE solution;
-} result;
+namespace homogeneous_bs
+{
 
-result &
-beam_search (const string &data_file_name, double stock_length,
-	     double stock_width);
+  typedef struct
+  {
+    int bins;
+    double frac_bins;
+    double utilization;
+    chrono::seconds::rep runtime;
+    TREE solution;
+  } result;
 
+  result &
+  beam_search (const string &data_file_name, double stock_length,
+	       double stock_width);
+
+} /* namespace homogeneous_bs */
 
 #endif /* HOMOGENEOUS_BINS_ENTRY_POINT_HPP_ */

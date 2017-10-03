@@ -16,6 +16,7 @@ namespace homogeneous_bs
 
   class NUMERO
   {
+  public:
     int parte_entera;
     int decimal_1; // digito del 0 al 9
     int decimal_2; // digito del 0 al 9

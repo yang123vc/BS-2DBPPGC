@@ -11,8 +11,6 @@
 namespace po = boost::program_options;
 namespace fs = boost::filesystem;
 
-#include <cstdlib>
-
 #include <iostream>
 #include <iomanip>
 #include <fstream>
@@ -228,7 +226,8 @@ main (int argc, const char **argv)
 	      cout << length << endl << endl;
 	    }
 
-	  result &bs_result = beam_search (data_file_name, length, width);
+	  homogeneous_bs::result &bs_result = homogeneous_bs::beam_search (
+	      data_file_name, length, width);
 
 	  //
 	  // printing results to console
@@ -271,8 +270,9 @@ main (int argc, const char **argv)
 
 	  if (vm.count (OP_OUTPUT))
 	    {
-	      print_solution (data_file_name, output_file_name,
-			      bs_result.runtime, bs_result.solution);
+	      homogeneous_bs::print_solution (data_file_name, output_file_name,
+					      bs_result.runtime,
+					      bs_result.solution);
 	    }
 	}
       else
