@@ -44,7 +44,7 @@ namespace homogeneous_bs
     last_level = it_child->get_level ();
     //Identify solution node
     int bestID = -1;
-    double bestUtil = GRANDE;
+    double bestUtil = HBS_GRANDE;
     while (it_child->get_level () == last_level)
       {
 	if (it_child->get_IDdisp ().empty ())
@@ -986,7 +986,7 @@ namespace homogeneous_bs
     //Cosine Law a^2 = b^2 + c^2 - 2bccos(angle(bc)).
     numer = pow (ar[last].mod, 2) + pow (ar[0].mod, 2) - pow (aux.mod, 2);
     denom = 2 * ar[last].mod * ar[0].mod;
-    angle = acos (numer / denom) * 180.0 / PI;
+    angle = acos (numer / denom) * 180.0 / HBS_PI;
     angles.push_back (angle);
 
     //Obtain remaining angles
@@ -999,7 +999,7 @@ namespace homogeneous_bs
 	//Cosine law for the remaining of the angles
 	numer = pow (ar[i - 1].mod, 2) + pow (ar[i].mod, 2) - pow (aux.mod, 2);
 	denom = 2 * ar[i - 1].mod * ar[i].mod;
-	angle = acos (numer / denom) * 180.0 / PI;
+	angle = acos (numer / denom) * 180.0 / HBS_PI;
 	angles.push_back (angle);
       }
     return angles;
@@ -1097,7 +1097,7 @@ namespace homogeneous_bs
 	    while (pos < g_matchings.size ()
 		&& (cont_match < g_matchings[pos]
 		    || (cont_match == g_matchings[pos]
-			&& bt2 < breaking_ties[pos] - TOL)))
+			&& bt2 < breaking_ties[pos] - HBS_TOL)))
 	      {
 		pos++;
 	      }
@@ -1134,22 +1134,22 @@ namespace homogeneous_bs
     double num = (u1 * v1) + (u2 * v2);
     double denom = sqrt ((u1 * u1) + (u2 * u2)) * sqrt ((v1 * v1) + (v2 * v2));
     double cos_alpha = num / denom;
-    if (cos_alpha >= 1 - TOL2) //Tolerance problems if cos_alpha is close to 1, alpha = 0.
+    if (cos_alpha >= 1 - HBS_TOL2) //Tolerance problems if cos_alpha is close to 1, alpha = 0.
       alpha = 0;
     else
       {
-	if (equal_double (cos_alpha, -1.0, TOL))
+	if (equal_double (cos_alpha, -1.0, HBS_TOL))
 	  cos_alpha = -1.0; //Avoid problems if cos_alpha very close to -1.
-	alpha = acos (cos_alpha) * (180 / PI); //alpha is in degrees.
+	alpha = acos (cos_alpha) * (180 / HBS_PI); //alpha is in degrees.
       }
-    if (equal_double (alpha, 360.0, TOL2) || equal_double (alpha, 0.0, TOL2)) //e1 & e2 are already matched.
+    if (equal_double (alpha, 360.0, HBS_TOL2) || equal_double (alpha, 0.0, HBS_TOL2)) //e1 & e2 are already matched.
       {
 	alpha = 0;
 	return alpha;
       }
 
     // e1 is going to be rotated to match with e2
-    double angulo_aux = 2 * PI * alpha / 360; //angulo_aux  = alpha rads.
+    double angulo_aux = 2 * HBS_PI * alpha / 360; //angulo_aux  = alpha rads.
     double cos_e1 = u1 / e1.mod; //cos of angle (e1, x-axis) (beta)
     double sin_e1 = u2 / e1.mod; //sin of angle (e1, x_axis) (beta)
     double cos_e2 = v1 / e2.mod; //cos of angle (e2, x-axis)
@@ -1161,7 +1161,7 @@ namespace homogeneous_bs
     double xx = (cos_e1 * cos_alpha) - (sin_e1 * sin_alpha); //cos(beta + alpha)
     double yy = (cos_e1 * sin_alpha) + (sin_e1 * cos_alpha); //sin(alpha + beta)
 
-    if (equal_double (xx, cos_e2, TOL2) && equal_double (yy, sin_e2, TOL2)) //if alpha + beta = angle(e2, x-axis)  rotate clockwise
+    if (equal_double (xx, cos_e2, HBS_TOL2) && equal_double (yy, sin_e2, HBS_TOL2)) //if alpha + beta = angle(e2, x-axis)  rotate clockwise
       {
 	return alpha;
       }
@@ -1179,32 +1179,32 @@ namespace homogeneous_bs
     pp = p.obtener_puntos ();
     vector<PUNTO> ppp;
 
-    double angulo_aux = 2 * PI * alpha / 360;
+    double angulo_aux = 2 * HBS_PI * alpha / 360;
 
     for (it = pp->begin (); it != pp->end (); it++)
       {
 	double modulo = sqrt (
 	    (*it).coordx * (*it).coordx + (*it).coordy * (*it).coordy);
-	double tita = PI / 2; // SI x=0 :: y>0
-	if (modulo < TOL && modulo > -TOL)
+	double tita = HBS_PI / 2; // SI x=0 :: y>0
+	if (modulo < HBS_TOL && modulo > -HBS_TOL)
 	  tita = 0;
 	else
 	  {
-	    if ((*it).coordx < TOL && (*it).coordx > -TOL && (*it).coordy < -TOL) // SI x>0 :: y>=0
+	    if ((*it).coordx < HBS_TOL && (*it).coordx > -HBS_TOL && (*it).coordy < -HBS_TOL) // SI x>0 :: y>=0
 	      {
-		tita = 3 * PI / 2;
+		tita = 3 * HBS_PI / 2;
 	      }
-	    if ((*it).coordx > TOL && (*it).coordy >= 0) // SI x>0 :: y>=0
+	    if ((*it).coordx > HBS_TOL && (*it).coordy >= 0) // SI x>0 :: y>=0
 	      {
 		tita = atan ((*it).coordy / (*it).coordx);
 	      }
-	    if ((*it).coordx > TOL && (*it).coordy < -TOL) // SI x>0 :: y<0
+	    if ((*it).coordx > HBS_TOL && (*it).coordy < -HBS_TOL) // SI x>0 :: y<0
 	      {
-		tita = atan ((*it).coordy / (*it).coordx) + 2 * PI;
+		tita = atan ((*it).coordy / (*it).coordx) + 2 * HBS_PI;
 	      }
-	    if ((*it).coordx < -TOL) // SI x<0
+	    if ((*it).coordx < -HBS_TOL) // SI x<0
 	      {
-		tita = atan ((*it).coordy / (*it).coordx) + PI;
+		tita = atan ((*it).coordy / (*it).coordx) + HBS_PI;
 	      }
 	  }
 
@@ -1315,7 +1315,7 @@ namespace homogeneous_bs
 		while (pos < g_matchings.size ()
 		    && (cont_match < g_matchings[pos]
 			|| (cont_match == g_matchings[pos]
-			    && bt2 < breaking_ties[pos] - TOL)))
+			    && bt2 < breaking_ties[pos] - HBS_TOL)))
 		  {
 		    pos++;
 		  }
@@ -1461,7 +1461,7 @@ namespace homogeneous_bs
 		while (pos < g_matchings.size ()
 		    && (cont_match < g_matchings[pos]
 			|| (cont_match == g_matchings[pos]
-			    && bt2 < breaking_ties[pos] - TOL)))
+			    && bt2 < breaking_ties[pos] - HBS_TOL)))
 		  {
 		    pos++;
 		  }
@@ -1515,7 +1515,7 @@ namespace homogeneous_bs
     suma += poligono[i].coordx * poligono[0].coordy
 	- poligono[i].coordy * poligono[0].coordx;
     //Si la suma es negativa, entonces recorremos los vértices en sentido horario
-    if (suma <= TOL)
+    if (suma <= HBS_TOL)
       {
 	std::reverse (poligono.begin (), poligono.end ());
       }
@@ -1783,8 +1783,8 @@ namespace homogeneous_bs
   bool
   equal_pto (PUNTO a, PUNTO b)
   {
-    if (equal_double (a.coordx, b.coordx, TOL)
-	&& equal_double (a.coordy, b.coordy, TOL))
+    if (equal_double (a.coordx, b.coordx, HBS_TOL)
+	&& equal_double (a.coordy, b.coordy, HBS_TOL))
       return true;
     else
       return false;
@@ -1811,11 +1811,11 @@ namespace homogeneous_bs
     //=============================================================
     crosprod = (B.coordx - A.coordx) * (C.coordy - A.coordy)
 	- (B.coordy - A.coordy) * (C.coordx - A.coordx);
-    if (crosprod > 0 + TOL)
+    if (crosprod > 0 + HBS_TOL)
       return 1;	//C is left of vector AB
-    if (crosprod < 0 - TOL)
+    if (crosprod < 0 - HBS_TOL)
       return -1;	//C is right of vector AB
-    if (equal_double (crosprod, 0, TOL))
+    if (equal_double (crosprod, 0, HBS_TOL))
       return 0;	//Alignded
     return pos;	//if returns 100 something is wrong.
   }
@@ -2007,8 +2007,8 @@ namespace homogeneous_bs
 	  }
 	p = IntersectTwoLines (A, B, C, D);
 	//Check whether the intersection point is whithin the limits of rbin.
-	if (p.coordx > xmin - TOL && p.coordx < xmax + TOL
-	    && p.coordy > ymin - TOL && p.coordy < ymax + TOL)
+	if (p.coordx > xmin - HBS_TOL && p.coordx < xmax + HBS_TOL
+	    && p.coordy > ymin - HBS_TOL && p.coordy < ymax + HBS_TOL)
 	  {
 	    //The intersection point is in rbin.
 	    //Check distance to ini or fin of current to update limits.
@@ -2043,8 +2043,8 @@ namespace homogeneous_bs
       }
     p = IntersectTwoLines (A, B, C, D);
     //Check whether the intersection point is whithin the limits of rbin.
-    if (p.coordx > xmin - TOL && p.coordx < xmax + TOL && p.coordy > ymin - TOL
-	&& p.coordy < ymax + TOL)
+    if (p.coordx > xmin - HBS_TOL && p.coordx < xmax + HBS_TOL && p.coordy > ymin - HBS_TOL
+	&& p.coordy < ymax + HBS_TOL)
       {
 	//The intersection point is in rbin.
 	//Check distance to ini or fin of current to update limits.
@@ -2070,10 +2070,10 @@ namespace homogeneous_bs
     double x1 = fin_l1.coordx;
     double y1 = fin_l1.coordy;
     double slope1;
-    if (!equal_double (x0, x1, TOL))
+    if (!equal_double (x0, x1, HBS_TOL))
       slope1 = (y1 - y0) / (x1 - x0);			//Slope of first line
     else
-      slope1 = GRANDE; //Line 1 is vertical
+      slope1 = HBS_GRANDE; //Line 1 is vertical
     //===================================================
     //Write second line in slope intercept mode
     double x2 = ini_l2.coordx;
@@ -2081,12 +2081,12 @@ namespace homogeneous_bs
     double x3 = fin_l2.coordx;
     double y3 = fin_l2.coordy;
     double slope2;
-    if (!equal_double (x2, x3, TOL))
+    if (!equal_double (x2, x3, HBS_TOL))
       slope2 = (y3 - y2) / (x3 - x2);	//Slope of second line
     else
-      slope2 = GRANDE;
+      slope2 = HBS_GRANDE;
     //=====================================================
-    if (equal_double (slope1, slope2, TOL))	//Lines are parallel
+    if (equal_double (slope1, slope2, HBS_TOL))	//Lines are parallel
       {
 	r.coordx = -1;
 	r.coordy = -1;
@@ -2094,13 +2094,13 @@ namespace homogeneous_bs
       }
     r.coordx = (y2 - slope2 * x2 + slope1 * x0 - y0) / (slope1 - slope2);
     r.coordy = slope1 * (r.coordx - x0) + y0;
-    if (slope1 == GRANDE)	//Line 1 is vertical
+    if (slope1 == HBS_GRANDE)	//Line 1 is vertical
       {
 	r.coordx = x0;
 	r.coordy = slope2 * (x0 - x2) + y2;
 	return r;
       }
-    if (slope2 == GRANDE)	//Line 2 is vertical
+    if (slope2 == HBS_GRANDE)	//Line 2 is vertical
       {
 	r.coordx = ini_l2.coordx;
 	return r;
@@ -2177,7 +2177,7 @@ namespace homogeneous_bs
   double
   GuillotineCutWaste (PIEZA ch, IRR_BIN current_sect, EDGES &best_gc)
   {
-    double min_waste = GRANDE;
+    double min_waste = HBS_GRANDE;
     double prop_waste;
     vector<EDGES> ed_ch = *ch.getEdges ();//Get the edges of the convex hull of the pieces in the section
     vector<EDGES>::iterator it_ed;
@@ -2238,7 +2238,9 @@ namespace homogeneous_bs
   FillBin (vector<PIEZA> &item, IRR_BIN &csect, EDGES &gc, int id)
   {
     bool placed = false;
-    IRR_BIN old_sec = csect; //Copy of the section in case no candidates fit in the new section
+    // Copy of the section in case no candidates fit in the new section
+    //
+    IRR_BIN old_sec = csect;
     vector<PUNTO> sect_points = *csect.get_ptos ();
     //Define the new section we are going to place pieces in
     int bin = csect.getBin ();
@@ -2504,7 +2506,7 @@ namespace homogeneous_bs
     max_rots = 2 * max_rots;
     //	int max_rots = 2;
     rots = calculate_rotations_FitSection_Mirror (edges_sec, piece, max_rots,
-    ALPHA);
+    HBS_ALPHA);
     //===================================================================
     int count_rot = 0;
     bool is_in_sect_IpFs = false;
@@ -2532,7 +2534,7 @@ namespace homogeneous_bs
 	    for (it_sec = edges_sec.begin (); it_sec != edges_sec.end ();
 		it_sec++)
 	      {
-		if (calculate_rotation_match (*it_pza, *it_sec) <= ALPHA)
+		if (calculate_rotation_match (*it_pza, *it_sec) <= HBS_ALPHA)
 		  {
 		    //Need to traslate a copy of the edges to see if it would be feasible.
 		    is_in_sect_IpFs = FitInSect_IniPcFinSec (ed_pza, ptos_sect,
@@ -2716,14 +2718,14 @@ namespace homogeneous_bs
     base_bin.fin.coordy = 0.0;
     base_bin.set_mod ();
     //=============================================
-    try_rots = calculate_rotations_FitBin_Mirror (bin, item, 10, ALPHA); //Rotations that match the piece and the bin.
+    try_rots = calculate_rotations_FitBin_Mirror (bin, item, 10, HBS_ALPHA); //Rotations that match the piece and the bin.
     //For the rectangle instances:
     //=============================
-    //try_rots = calculate_rotations_FitBin_Mirror(bin, item, 2, ALPHA);//Rotations that match the piece and the
+    //try_rots = calculate_rotations_FitBin_Mirror(bin, item, 2, HBS_ALPHA);//Rotations that match the piece and the
     //=============================
     bool placed = false;
     int count_rot = 0;
-    if (item.getArea () < bin.get_waste () + TOL) //Area of piece < free area of bin
+    if (item.getArea () < bin.get_waste () + HBS_TOL) //Area of piece < free area of bin
       {
 	while (!placed && count_rot < try_rots.size ())
 	  {
@@ -2759,7 +2761,7 @@ namespace homogeneous_bs
 	    //            double diag;
 	    //            diag = sqrt(pow(bin.getL(),2) + pow(bin.getW(),2));
 	    //            double ang_diag;
-	    //            ang_diag = acos(bin.getL()/diag)*180 /PI;
+	    //            ang_diag = acos(bin.getL()/diag)*180 /HBS_PI;
 	    // PlaceBigPiece();
 	  }
       }
@@ -3035,7 +3037,7 @@ namespace homogeneous_bs
 			  dist = 0;
 			double slide = 0;
 			slide_feas = false;
-			if (md > THRES + TOL)
+			if (md > HBS_THRES + HBS_TOL)
 			  {
 			    Attach (convex_hull, citem, i, j); //Attach edge j from piece to edge i of convex hull
 			    for (double d = 0; d <= dist; d += slide_ep)
@@ -3053,7 +3055,7 @@ namespace homogeneous_bs
 				    double Util = convexhull_Utilization (
 					convex_hull, citem);
 				    //double Util = rectencl_Utilization(convex_hull, citem);
-				    if (Util > MaxUtil + TOL) //If it is a good utilization of the new convex hull area, store best values
+				    if (Util > MaxUtil + HBS_TOL) //If it is a good utilization of the new convex hull area, store best values
 				      {
 					MaxUtil = Util;
 					best_d = d;
@@ -3083,8 +3085,8 @@ namespace homogeneous_bs
   void
   LastBinRefinementGE (vector<PIEZA> &pzas, BIN &sol)
   {
-    double hor_util = (-1) * GRANDE;
-    double ver_util = (-1) * GRANDE;
+    double hor_util = (-1) * HBS_GRANDE;
+    double ver_util = (-1) * HBS_GRANDE;
     BIN lastbin = sol; //Copy of last node
     //Calculate the horizontal utilization with the pieces in the original position
     double orig_hor_util = (-1);
@@ -3109,7 +3111,7 @@ namespace homogeneous_bs
     vector<PIEZA> pzas_hor = pzas;
     sort (pzas_hor.begin (), pzas_hor.end (), orden_area);
     hor_util = ArrangeHorGE (pzas_hor, sol);
-    if (hor_util == (-1) * GRANDE)
+    if (hor_util == (-1) * HBS_GRANDE)
       {
 	double maxheight = -1;
 	for (int id = 0; id < sol.getNumSect (); id++)
@@ -3131,7 +3133,7 @@ namespace homogeneous_bs
 		if (maxheight < p)
 		  maxheight = (*ch.obtener_puntos ())[i].coordy;
 	      }
-	    if (equal_double (maxheight, sol.getW (), TOL))
+	    if (equal_double (maxheight, sol.getW (), HBS_TOL))
 	      break;
 	  }
 	hor_util = maxheight / sol.getW ();
@@ -3148,7 +3150,7 @@ namespace homogeneous_bs
     vector<PIEZA> pzas_vert = pzas;
     sort (pzas_vert.begin (), pzas_vert.end (), orden_area);
     ver_util = ArrangeVertGE (pzas_vert, sol);
-    if (ver_util == (-1) * GRANDE)
+    if (ver_util == (-1) * HBS_GRANDE)
       {
 	double maxlength = -1;
 	for (int id = 0; id < sol.getNumSect (); id++)
@@ -3170,7 +3172,7 @@ namespace homogeneous_bs
 		if (maxlength < p)
 		  maxlength = (*ch.obtener_puntos ())[i].coordx;
 	      }
-	    if (equal_double (maxlength, sol.getL (), TOL))
+	    if (equal_double (maxlength, sol.getL (), HBS_TOL))
 	      break;
 	  }
 	ver_util = maxlength / sol.getL ();
@@ -3184,14 +3186,14 @@ namespace homogeneous_bs
 
       }
     //    BIN lastbin_vert = sol;
-    if (ver_util > 0 && ver_util < hor_util + TOL)
+    if (ver_util > 0 && ver_util < hor_util + HBS_TOL)
       {
 	pzas = pzas_vert;
 	//sol = lastbin_vert;
 	sol.FixUtil (ver_util);
 
       }
-    if (hor_util > 0 && hor_util < ver_util + TOL)
+    if (hor_util > 0 && hor_util < ver_util + HBS_TOL)
       {
 	pzas = pzas_hor;
 	//        sol = lastbin_hor;
@@ -3205,8 +3207,8 @@ namespace homogeneous_bs
     list<NODE>::iterator it_node;
     it_node = tree.end ();
     it_node--;
-    double hor_util = (-1) * GRANDE;
-    double ver_util = (-1) * GRANDE;
+    double hor_util = (-1) * HBS_GRANDE;
+    double ver_util = (-1) * HBS_GRANDE;
     int last_level = it_node->get_level ();
     while (it_node->get_level () == last_level) //At last level
       {
@@ -3224,7 +3226,7 @@ namespace homogeneous_bs
 	    //========================
 	    sort (pzas.begin (), pzas.end (), orden_area);
 	    hor_util = ArrangeHor (pzas, *it_node);
-	    if (hor_util == (-1) * GRANDE)
+	    if (hor_util == (-1) * HBS_GRANDE)
 	      {
 		it_node->CopyPiecesInSect ();
 		double maxheight = -1;
@@ -3247,7 +3249,7 @@ namespace homogeneous_bs
 			if (maxheight < p)
 			  maxheight = (*ch.obtener_puntos ())[i].coordy;
 		      }
-		    if (equal_double (maxheight, it_node->getW (), TOL))
+		    if (equal_double (maxheight, it_node->getW (), HBS_TOL))
 		      break;
 		  }
 		hor_util = maxheight / it_node->getW ();
@@ -3257,7 +3259,7 @@ namespace homogeneous_bs
 	    NODE lastbin_hor = *it_node;
 	    *it_node = lastbin;
 	    ver_util = ArrangeVert (pzas, *it_node);
-	    if (ver_util == (-1) * GRANDE)
+	    if (ver_util == (-1) * HBS_GRANDE)
 	      {
 		it_node->CopyPiecesInSect ();
 		double maxlength = -1;
@@ -3280,7 +3282,7 @@ namespace homogeneous_bs
 			if (maxlength < p)
 			  maxlength = (*ch.obtener_puntos ())[i].coordx;
 		      }
-		    if (equal_double (maxlength, it_node->getL (), TOL))
+		    if (equal_double (maxlength, it_node->getL (), HBS_TOL))
 		      break;
 		  }
 		ver_util = maxlength / it_node->getL ();
@@ -3288,13 +3290,13 @@ namespace homogeneous_bs
 		  ver_util = 1.0;
 	      }
 	    NODE lastbin_vert = *it_node;
-	    if (ver_util > 0 && ver_util < hor_util + TOL)
+	    if (ver_util > 0 && ver_util < hor_util + HBS_TOL)
 	      {
 		*it_node = lastbin_vert;
 		it_node->FixUtil (ver_util);
 
 	      }
-	    if (hor_util > 0 && hor_util < ver_util + TOL)
+	    if (hor_util > 0 && hor_util < ver_util + HBS_TOL)
 	      {
 		*it_node = lastbin_hor;
 		it_node->FixUtil (hor_util);
@@ -3387,7 +3389,7 @@ namespace homogeneous_bs
   double
   ArrangeHorGE (vector<PIEZA> &pzas, BIN &node)
   {
-    double hor_util = (-1) * GRANDE;
+    double hor_util = (-1) * HBS_GRANDE;
     BIN c_node = node; //Copy of node, in case nothing gets modify we can retrieve it.
     c_node.empty_bin ();
     c_node.setID (node.getID ());
@@ -3451,10 +3453,10 @@ namespace homogeneous_bs
 
 	height_bm = HorAligMatch (ib_node, last_pzas, convex_hull, best_ec,
 				  best_ep, best_d, best_p_bm, best_m);
-	if (height_gc < GRANDE)
+	if (height_gc < HBS_GRANDE)
 	  height_gc = VertGuillCut (ib_node, last_pzas, convex_hull, nodeW,
 				    nodeL, best_rot, best_p_vc, best_i_vc, vcg); //Devuelve la altura total si la pieza se coloca a la dcha del actual convex hull.
-	if (height_bm == GRANDE && height_gc == GRANDE)
+	if (height_bm == HBS_GRANDE && height_gc == HBS_GRANDE)
 	  return hor_util; //Piece did not fit
 
 	if (height_bm <= height_gc)
@@ -3508,7 +3510,7 @@ namespace homogeneous_bs
     for (int i = 0; i < e_pza.size (); i++)
       {
 	e_pza[i].ini.coordy = e_pza[i].ini.coordy - slide;
-	if (e_pza[i].ini.coordy < 0 - TOL) //Movement out of the bin.
+	if (e_pza[i].ini.coordy < 0 - HBS_TOL) //Movement out of the bin.
 	  return false;
       }
     //Check feasibility
@@ -3546,10 +3548,10 @@ namespace homogeneous_bs
 		double node_w, double node_l, double &best_rot, int &best_p,
 		int &best_i, EDGES &v_gc)
   {
-    double MaxHeight = GRANDE;
+    double MaxHeight = HBS_GRANDE;
     PIEZA item;
     double xmax = -1;
-    double ymin = GRANDE;
+    double ymin = HBS_GRANDE;
     // Calculamos la coordenada más a la derecha de la envoltura convexa. En
     // caso de empate, nos quedamos con la más baja (?).
     vector<PUNTO> ch_ptos = *convex_hull.obtener_puntos ();
@@ -3581,10 +3583,10 @@ namespace homogeneous_bs
 	    for (int j = 0; j < (item.obtener_puntos ())->size (); j++)
 	      {
 		vector<PUNTO> i_ptos = *item.obtener_puntos ();
-		if (i_ptos[j].coordx < 0 - TOL
-		    || i_ptos[j].coordx > node_l + TOL
-		    || i_ptos[j].coordy < 0 - TOL
-		    || i_ptos[j].coordy > node_w + TOL)
+		if (i_ptos[j].coordx < 0 - HBS_TOL
+		    || i_ptos[j].coordx > node_l + HBS_TOL
+		    || i_ptos[j].coordy < 0 - HBS_TOL
+		    || i_ptos[j].coordy > node_w + HBS_TOL)
 		  {
 		    item = *list[p]; //Piece does not fit in bin, back to original position.
 		    fit = false;
@@ -3617,7 +3619,7 @@ namespace homogeneous_bs
   double
   ArrangeVert (vector<PIEZA> &pzas, NODE &node)
   {
-    double vert_util = (-1) * GRANDE;
+    double vert_util = (-1) * HBS_GRANDE;
     NODE c_node = node; //Copy of node, in case nothing gets modify we can retrieve it.
     c_node.empty_bin ();
     c_node.setID (node.getID ());
@@ -3681,10 +3683,10 @@ namespace homogeneous_bs
 	//PIEZA convex_hull = create_rectencl_in_section(ib_node); //Rectangle enclosure for the rectangle instances.
 	length_bm = VertAligMatch (ib_node, last_pzas, convex_hull, best_ec,
 				   best_ep, best_d, best_p_bm, best_m);
-	if (length_gc < GRANDE)
+	if (length_gc < HBS_GRANDE)
 	  length_gc = HorGuillCut (ib_node, last_pzas, convex_hull, nodeW,
 				   nodeL, best_rot, best_p_hc, best_i_hc, hcg); //Devuelve la altura total si la pieza se coloca a la dcha del actual convex hull.
-	if (length_bm == GRANDE && length_gc == GRANDE)
+	if (length_bm == HBS_GRANDE && length_gc == HBS_GRANDE)
 	  return vert_util; //Piece did not fit
 
 	if (length_bm <= length_gc)
@@ -3732,7 +3734,7 @@ namespace homogeneous_bs
   double
   ArrangeHor (vector<PIEZA> &pzas, NODE &node)
   {
-    double hor_util = (-1) * GRANDE;
+    double hor_util = (-1) * HBS_GRANDE;
     NODE c_node = node; //Copy of node, in case nothing gets modify we can retrieve it.
     c_node.empty_bin ();
     c_node.setID (node.getID ());
@@ -3797,10 +3799,10 @@ namespace homogeneous_bs
 
 	height_bm = HorAligMatch (ib_node, last_pzas, convex_hull, best_ec,
 				  best_ep, best_d, best_p_bm, best_m);
-	if (height_gc < GRANDE)
+	if (height_gc < HBS_GRANDE)
 	  height_gc = VertGuillCut (ib_node, last_pzas, convex_hull, nodeW,
 				    nodeL, best_rot, best_p_vc, best_i_vc, vcg); //Devuelve la altura total si la pieza se coloca a la dcha del actual convex hull.
-	if (height_bm == GRANDE && height_gc == GRANDE)
+	if (height_bm == HBS_GRANDE && height_gc == HBS_GRANDE)
 	  return hor_util; //Piece did not fit
 
 	if (height_bm <= height_gc)
@@ -3854,7 +3856,7 @@ namespace homogeneous_bs
     //It uses ideas from EJORS paper (Han et al.)
     PIEZA citem;
     bool is_ed_bin = false;
-    double MaxHeight = GRANDE;
+    double MaxHeight = HBS_GRANDE;
     double dist = 0;
     //bool matched = false;
     bool is_sym = true;
@@ -3887,7 +3889,7 @@ namespace homogeneous_bs
 			  dist = 0;
 			double slide = 0;
 			slide_feas = false;
-			if (md > 0 - TOL)
+			if (md > 0 - HBS_TOL)
 			  {
 			    Attach (convex_hull, citem, i, j); //Attach edge j from piece to edge i of convex hull
 			    for (double d = 0; d <= dist; d += slide_ep)
@@ -3906,7 +3908,7 @@ namespace homogeneous_bs
 					convex_hull, citem);
 				    //double Height = rectencl_Height(convex_hull, citem);
 
-				    if (Height < MaxHeight - TOL)
+				    if (Height < MaxHeight - HBS_TOL)
 				      {
 					//matched = true;
 					MaxHeight = Height;
@@ -3937,7 +3939,7 @@ namespace homogeneous_bs
   double
   ArrangeVertGE (vector<PIEZA> &pzas, BIN &node)
   {
-    double vert_util = (-1) * GRANDE;
+    double vert_util = (-1) * HBS_GRANDE;
     BIN c_node = node; //Copy of node, in case nothing gets modify we can retrieve it.
     c_node.empty_bin ();
     c_node.setID (node.getID ());
@@ -3998,10 +4000,10 @@ namespace homogeneous_bs
 	//PIEZA convex_hull = create_rectencl_in_section(ib_node); //Rectangle enclosure for the rectangle instances.
 	length_bm = VertAligMatch (ib_node, last_pzas, convex_hull, best_ec,
 				   best_ep, best_d, best_p_bm, best_m);
-	if (length_gc < GRANDE)
+	if (length_gc < HBS_GRANDE)
 	  length_gc = HorGuillCut (ib_node, last_pzas, convex_hull, nodeW,
 				   nodeL, best_rot, best_p_hc, best_i_hc, hcg); //Devuelve la altura total si la pieza se coloca a la dcha del actual convex hull.
-	if (length_bm == GRANDE && length_gc == GRANDE)
+	if (length_bm == HBS_GRANDE && length_gc == HBS_GRANDE)
 	  return vert_util; //Piece did not fit
 
 	if (length_bm <= length_gc)
@@ -4055,7 +4057,7 @@ namespace homogeneous_bs
     for (int i = 0; i < e_pza.size (); i++)
       {
 	e_pza[i].ini.coordx = e_pza[i].ini.coordx - slide;
-	if (e_pza[i].ini.coordx < 0 - TOL) //Movement out of the bin.
+	if (e_pza[i].ini.coordx < 0 - HBS_TOL) //Movement out of the bin.
 	  return false;
       }
     //Check feasibility
@@ -4097,7 +4099,7 @@ namespace homogeneous_bs
     // others in the bin. It uses ideas from EJORS paper (Han et al.)
     PIEZA citem;
     bool is_ed_bin = false;
-    double MaxLength = GRANDE;
+    double MaxLength = HBS_GRANDE;
     double dist = 0;
     //bool matched = false;
     bool is_sym = true;
@@ -4130,7 +4132,7 @@ namespace homogeneous_bs
 			  dist = 0;
 			double slide = 0;
 			slide_feas = false;
-			if (md > 0 - TOL)
+			if (md > 0 - HBS_TOL)
 			  {
 			    Attach (convex_hull, citem, i, j); //Attach edge j from piece to edge i of convex hull
 			    for (double d = 0; d <= dist; d += slide_ep)
@@ -4148,7 +4150,7 @@ namespace homogeneous_bs
 				    double Length = convexhull_Length (
 					convex_hull, citem);
 				    //double Length = rectencl_Length(convex_hull, citem);
-				    if (Length < MaxLength - TOL)
+				    if (Length < MaxLength - HBS_TOL)
 				      {
 					//matched = true;
 					MaxLength = Length;
@@ -4176,9 +4178,9 @@ namespace homogeneous_bs
 	       double node_w, double node_l, double &best_rot, int &best_p,
 	       int &best_i, EDGES &h_gc)
   {
-    double MaxLength = GRANDE;
+    double MaxLength = HBS_GRANDE;
     PIEZA item;
-    double xmin = GRANDE;
+    double xmin = HBS_GRANDE;
     double ymax = -1;
     // Calculamos la coordenada más arriba de la envoltura convexa. En caso de
     // empate, nos quedamos con la más a la izqda (?).
@@ -4211,10 +4213,10 @@ namespace homogeneous_bs
 	    for (int j = 0; j < (item.obtener_puntos ())->size (); j++)
 	      {
 		vector<PUNTO> i_ptos = *item.obtener_puntos ();
-		if (i_ptos[j].coordx < 0 - TOL
-		    || i_ptos[j].coordx > node_l + TOL
-		    || i_ptos[j].coordy < 0 - TOL
-		    || i_ptos[j].coordy > node_w + TOL)
+		if (i_ptos[j].coordx < 0 - HBS_TOL
+		    || i_ptos[j].coordx > node_l + HBS_TOL
+		    || i_ptos[j].coordy < 0 - HBS_TOL
+		    || i_ptos[j].coordy > node_w + HBS_TOL)
 		  {
 		    item = *list[p]; //Piece does not fit in bin, back to original position.
 		    fit = false;

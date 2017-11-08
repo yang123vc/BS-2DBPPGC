@@ -44,7 +44,7 @@ namespace homogeneous_bs
 	    if (m == 1 && is_symetric)
 	      continue;
 	    try_rots = calculate_rotations_FitNode (current_node, pzas_c[i],
-						    No_Rots, ALPHA);
+						    No_Rots, HBS_ALPHA);
 	    for (int r = 0; r < try_rots.size (); r++) //For each rotation
 	      {
 		is_symetric = pzas_c[i].obtener_rotacion (try_rots[r]);
@@ -160,7 +160,7 @@ namespace homogeneous_bs
 		    //==============================================
 		    //Select an appropriate section that may allocate more pieces.
 		    if (equal_double (convex_hull.getArea (),
-				      current_sect.getArea (), TOL)
+				      current_sect.getArea (), HBS_TOL)
 			|| current_sect.get_waste () < pza_c[last].getArea ()) //Current section filled up, useless to try it.
 		      {
 			i--;			//Move to previous section
@@ -337,7 +337,7 @@ namespace homogeneous_bs
 	{
 	  double of_i = Local_of (children[i]);
 
-	  if (equal_double (node_util, of_i, TOL)) //In case there are nodes with same utilization, break ties with similar number of pieces.
+	  if (equal_double (node_util, of_i, HBS_TOL)) //In case there are nodes with same utilization, break ties with similar number of pieces.
 	    {
 	      int node_pieces = node.getNumPiezas ();
 	      int c_pzs = children[i].getNumPiezas ();
@@ -465,15 +465,15 @@ namespace homogeneous_bs
     //==================================================================================
     //Acceptance criterion if we want the branch with smaller fractional number of bins.
     double lowest_of = best_of[best_of.size () - 1].fractional_n_bins;
-    if (node_of.fractional_n_bins <= lowest_of - PARAM_LAST_BIN)
+    if (node_of.fractional_n_bins <= lowest_of - HBS_PARAM_LAST_BIN)
       {
 	is_accepted = true;
       }
     else
       {
-	if (node_of.fractional_n_bins <= lowest_of + PARAM_LAST_BIN
+	if (node_of.fractional_n_bins <= lowest_of + HBS_PARAM_LAST_BIN
 	    && node_of.prop_used_current_bin
-		> best_of[best_of.size () - 1].prop_used_current_bin + TOL2)
+		> best_of[best_of.size () - 1].prop_used_current_bin + HBS_TOL2)
 	  {
 	    is_accepted = true;
 	  }
@@ -488,11 +488,13 @@ namespace homogeneous_bs
     if (is_accepted)
       {
 	int pos = 0;
+	// cambiar a pos < best_of.size () - 1 en el futuro
+	//
 	while ((pos < best_of.size () - 1
 	    && (node_of.fractional_n_bins
-		>= best_of[pos].fractional_n_bins - PARAM_LAST_BIN))
+		>= best_of[pos].fractional_n_bins - HBS_PARAM_LAST_BIN))
 	    || (node_of.fractional_n_bins
-		>= best_of[pos].fractional_n_bins + PARAM_LAST_BIN
+		>= best_of[pos].fractional_n_bins + HBS_PARAM_LAST_BIN
 		&& node_of.prop_used_current_bin
 		    < best_of[pos].prop_used_current_bin
 		&& pos < best_of.size () - 1))
@@ -543,19 +545,31 @@ namespace homogeneous_bs
     int last = problem_size - 1;
     int pieces_placed = 0;
     double best_of = 0;
-    while (pieces_placed < problem_size) //While not all the pieces have been placed
+
+    // While not all the pieces have been placed
+    //
+    while (pieces_placed < problem_size)
       {
-	double ch_util = -1; //best utilization of the convex hull when the next piece is attached.
+	// best utilization of the convex hull when the next piece is attached.
+	//
+	double ch_util = -1;
 	int best_i = -1; //Best edge of the ch
 	int best_j = -1; //Best edge of the piece
 	int best_p = -1; //Best piece from list
 	int best_m = -1; // =0 piece not mirrored
 	double best_d = -1; // best slide distance.
 	int bin_count = 0;
-	double gc_waste = -1; //best utilization of the bin, when the guillotine cut is performed.
+
+	// best utilization of the bin, when the guillotine cut is performed.
+	//
+	double gc_waste = -1;
 	EDGES best_gc;
 	int no_sects = -1; //number of sections of current bin;
-	bool placed = false; // placed = true if any piece from the list is placed in the current bin.
+
+	// placed = true if any piece from the list is placed in the current
+	// bin.
+	//
+	bool placed = false;
 	while (bin_count < bin_sol.size ())
 	  {
 	    //Move to first open bin
@@ -565,17 +579,29 @@ namespace homogeneous_bs
 	      break; //NO more bins to try, open new bin
 	    current_bin = bin_sol[bin_count];
 	    no_sects = current_bin.getNumSect ();
-	    current_sect = current_bin.get_ib (no_sects - 1); //Always start from the last section created.
-	    //We need to eplore one section at a time. Not starting from the last section created.
+
+	    // Always start from the last section created.
+	    //
+	    current_sect = current_bin.get_ib (no_sects - 1);
+
+	    // We need to eplore one section at a time. Not starting from the
+	    // last section created.
 	    ch = create_convexhull_in_section (current_sect);
 	    //ch = create_rectencl_in_section(current_sect); //Rectangle enclosure for the rectangle instances.
 
 	    //Create a list of next pieces to be placed.
+	    //
 	    candidates = CreateList (item, current_sect);
-	    if (candidates.empty ()) //No unplaced piece fits in the last section created.
+
+	    // No unplaced piece fits in the last section created.
+	    //
+	    if (candidates.empty ())
 	      {
 		int i = 0;
-		//Check if it is possible to have candidates to any of the other sections.
+
+		// Check if it is possible to have candidates to any of the
+		// other sections.
+		//
 		while (candidates.empty () && i < current_bin.getNumSect ())
 		  {
 		    current_sect = current_bin.get_ib (i);
@@ -584,28 +610,36 @@ namespace homogeneous_bs
 		  }
 		if (candidates.empty ())
 		  {
-		    current_bin.setOpen (false); //No more candidates for this bin, bin closed.
+		    // No more candidates for this bin, bin closed.
+		    //
+		    current_bin.setOpen (false);
 		    bin_sol[bin_count].setOpen (false);
-		    //					printf("BIN %d Closed (no more candidates)\n", current_bin.getID());
+//		    printf ("BIN %d Closed (no more candidates)\n", current_bin.getID ());
 		    bin_count++;			//move to next bin
 		    continue;
 		  }
-		else//We have changed the section so we need to recalculate the convex hull.
+		else // We have changed the section so we need to recalculate the convex hull.
 		  {
 		    ch = create_convexhull_in_section (current_sect);
 		    //ch = create_rectencl_in_section(current_sect); //Rectangle enclosure for the rectangle instances.
-
 		  }
 	      }
+
 	    //Check CH util
 	    //=================================
 	    ch_util = SelectBestMatch (current_sect, candidates, ch, best_i,
 				       best_j, best_d, best_p, best_m);
-	    gc_waste = GuillotineCutWaste (ch, current_sect, best_gc); //Calculates the proportion wasted
+	    // Calculates the proportion wasted
+	    //
+	    gc_waste = GuillotineCutWaste (ch, current_sect, best_gc);
+
 	    double gc_used = 1 - gc_waste;
 	    double bin_used = current_bin.getPropUtil ();
-	    //First criteria:
-	    //If the bin is already more than 80% used: Fill the bin and close it
+
+	    // First criteria:
+	    // If the bin is already more than 80% used: Fill the bin and close
+	    // it
+	    //
 	    if (bin_used > 0.80) //Place pieces in remaining space according to best guillotine cut.
 	      {
 		while (current_bin.getOpen ())
@@ -620,7 +654,7 @@ namespace homogeneous_bs
 			//Select an appropriate section that may allocate more pieces.
 			if (equal_double (ch.getArea (),
 					  current_sect.getArea (),
-					  TOL)
+					  HBS_TOL)
 			    || current_sect.get_waste ()
 				< item[last].getArea ()) //Current section filled up, useless to try it.
 			  {
@@ -654,11 +688,13 @@ namespace homogeneous_bs
 		      {
 			current_bin.setOpen (false); //No more fits. Close bin.
 			bin_sol[bin_count].setOpen (false);
-			//						printf("BIN %d Closed (+80%)\n", current_bin.getID());
+//			printf ("BIN %d Closed (+80%)\n", current_bin.getID ());
 		      }
 		    else //place piece
 		      {
-			//Redefine previous section since its limits have changed.
+			// Redefine previous section since its limits have
+			// changed.
+			//
 			vector<PUNTO> *ptos_sec;
 			IRR_BIN sect = current_bin.get_ib (i);
 			ptos_sec = sect.get_ptos ();
@@ -673,11 +709,11 @@ namespace homogeneous_bs
 			current_bin.add_GC (best_gc); //Add the guillotine cut to the bin.
 			bin_sol[bin_count] = current_bin; //Add the new bin to the solution
 			pieces_placed++;
-			//						vector<PIEZA*> pi = *current_bin.getPI();
-			//						PIEZA *last = pi.back();
-			//						printf("Piece %d placed: %d\n",pieces_placed,last->getID());
+//			vector<PIEZA*> pi = *current_bin.getPI ();
+//			PIEZA *last = pi.back ();
+//			printf ("Piece %d placed: %d\n", pieces_placed,
+//				last->getID ());
 		      }
-
 		  }
 		break; //Out of this loop and onto the next piece.
 	      }
@@ -687,23 +723,45 @@ namespace homogeneous_bs
 		//Use CH criteria to match the pieces
 		if (best_m == 1) //mirror piece
 		  candidates[best_p]->set_mirror (true);
-		Attach (ch, *candidates[best_p], best_i, best_j); //Attach best values of edge i from convex hull and edge j from piece
+
+		// Attach best values of edge i from convex hull and edge j from
+		// piece
+		//
+		Attach (ch, *candidates[best_p], best_i, best_j);
+
+		// Slide edges along best distance
+		//
 		Feasible_Slide_InSect (current_sect, ch, *candidates[best_p],
-				       best_i, best_j, best_d); //Slide edges along best distance
-		//Get the edges of the convex hull to include the guillotine cut.
+				       best_i, best_j, best_d);
+
+		// Get the edges of the convex hull to include the guillotine
+		// cut
+		//
 		vector<EDGES> ed_ch = *ch.getEdges ();
-		current_sect.add_GC (ed_ch[best_i]); //Include the guillotine cut in the section
-		current_sect.add_piece (*candidates[best_p]); //Include the new piece in the current sect
-		current_bin.include_piece (*candidates[best_p]); //Include piece in the bin
+		// Include the guillotine cut in the section
+		//
+		current_sect.add_GC (ed_ch[best_i]);
+		// Include the new piece in the current sect
+		//
+		current_sect.add_piece (*candidates[best_p]);
+		// Include piece in the bin
+		//
+		current_bin.include_piece (*candidates[best_p]);
 		current_bin.update_section (current_sect);
-		current_bin.add_GC (ed_ch[best_i]); //add the guillotine cut in the bin.
+		// add the guillotine cut in the bin.
+		//
+		current_bin.add_GC (ed_ch[best_i]);
 		bin_sol[bin_count] = current_bin;
 		candidates.clear ();
 		placed = true;
 		pieces_placed++;
-		break;  	     //Out of this loop and onto the next piece.
+//		printf ("Piece %d placed: %d\n", pieces_placed,
+//			candidates[best_p]->getID ());
+		break; // Out of this loop and onto the next piece.
 	      }
-	    //Third Criteria: Make a Guillotine cut on current section and place piece in the new defined section.
+	    // Third Criteria: Make a Guillotine cut on current section and
+	    // place piece in the new defined section.
+	    //
 	    else if (!placed) //place any of the candidates in the best section defined by best_gc.
 	      {
 		placed = Place_in_NewSection (current_sect, candidates, best_gc,
@@ -724,15 +782,19 @@ namespace homogeneous_bs
 		    current_bin.add_GC (best_gc);//Add the guillotine cut to the bin.
 		    bin_sol[bin_count] = current_bin;
 		    pieces_placed++;
-		    //					vector<PIEZA*> pi = *current_bin.getPI();
-		    //					PIEZA *last = pi.back();
-		    //					printf("Piece %d placed: %d\n",pieces_placed,last->getID());
+//		    vector<PIEZA*> pi = *current_bin.getPI ();
+//		    PIEZA *last = pi.back ();
+//		    printf ("Piece %d placed: %d\n", pieces_placed,
+//			    last->getID ());
 		    candidates.clear ();
 		    break;	//Out of this loop and onto the next piece.
 		  }
+		// Fourth criteria: Create new guillotine cuts in the created
+		// sections, and fill the new section with one piece, then
+		// continue placing pieces.
+		//
 		else
 		  {
-		    //Fourth criteria: Create new guillotine cuts in the created sections, and fill the new section with one piece, then continue placing pieces.
 		    PUNTO gc_empty;
 		    gc_empty.coordx = -1;
 		    gc_empty.coordy = -1;
@@ -742,10 +804,15 @@ namespace homogeneous_bs
 			for (int i = 0; i < current_bin.getNumSect (); i++)
 			  {
 			    current_sect = current_bin.get_ib (i);
-			    ch = create_convexhull_in_section (current_sect);//Creates the convex hull of pieces in the section
-			    //							ch = create_rectencl_in_section(current_sect); //Rectangle enclosure for the rectangle instances.
 
-			    GuillotineCutWaste (ch, current_sect, best_gc); //Calculates the proportion wasted
+			    // Creates the convex hull of pieces in the section
+			    //
+			    ch = create_convexhull_in_section (current_sect);
+//			    ch = create_rectencl_in_section (current_sect); //Rectangle enclosure for the rectangle instances.
+
+			    // Calculates the proportion wasted
+			    //
+			    GuillotineCutWaste (ch, current_sect, best_gc);
 			    if (equal_pto (best_gc.ini, gc_empty)
 				&& equal_pto (best_gc.fin, gc_empty)) //No more gc possible in current section, move to next
 			      continue;
@@ -753,7 +820,9 @@ namespace homogeneous_bs
 					      current_bin.getNumSect ());
 			    if (placed)
 			      {
-				//Redefine previous section since its limits have changed.
+				// Redefine previous section since its limits
+				// have changed
+				//
 				vector<PUNTO> *ptos_sec;
 				IRR_BIN sect = current_bin.get_ib (i);
 				current_sect.set_ID (current_bin.getNumSect ());
@@ -761,24 +830,29 @@ namespace homogeneous_bs
 				*ptos_sec = Redefine_IrrBin_withPieces (
 				    *ptos_sec, best_gc);
 				current_bin.update_ptos_sect (sect);
-				//Add the new section to the bin, and update this section
+				// Add the new section to the bin, and update
+				// this section
 				current_sect.add_GC (best_gc); //Add the guillotine cut to the section
 				current_bin.add_IB (current_sect);
 				current_bin.add_piece_SectToBin (current_sect);
 				current_bin.add_GC (best_gc); //Add the guillotine cut to the bin.
 				bin_sol[bin_count] = current_bin;
 				pieces_placed++;
-				//								vector<PIEZA*> pi = *current_bin.getPI();
-				//								PIEZA *last = pi.back();
-				//								printf("Piece %d placed: %d\n",pieces_placed,last->getID());
+//				vector<PIEZA*> pi = *current_bin.getPI ();
+//				PIEZA *last = pi.back ();
+//				printf ("Piece %d placed: %d\n", pieces_placed,
+//					last->getID ());
 				candidates.clear ();
 				break; //Out of the for loop
 			      }
 			  }
 			if (!placed)
-			  { //After analysing all sections, no piece can be added to any new gc.
+			  { // After analysing all sections, no piece can be
+			    // added to any new gc.
+			    //
 			    current_bin.setOpen (false);
 			    bin_sol[bin_count].setOpen (false);
+			    //printf("BIN %d Closed (No more pieces)\n", current_bin.getID());
 			  }
 		      }
 		    if (!placed)
@@ -797,22 +871,42 @@ namespace homogeneous_bs
 	    || (bin_count == bin_sol.size () && !placed)) //If current bin is still open and there is no way of placing the piece with all criteria, or we have closed all existing bins. We need to open a new bin
 	  {
 	    int p = 0;
-	    //Open new bin.
+	    // Open new bin.
 	    current_bin.empty_bin ();
 	    current_sect.empty_irrbin ();
 	    no_bins++;
 	    current_bin.initialize_bin (stock_length, stock_width, no_bins); //Initialise new bin.
 	    while (item[p].is_placed ())
 	      p++; //Move to the first non place piece.
-	    OpenBin (current_bin, item[p]); //Place first piece on the candidate list in bin.
-	    current_sect = ConvertToIRRBIN (current_bin); //Define the new bin as a first irregular bin.
+	    // Place first piece on the candidate list in bin.
+	    //
+	    OpenBin (current_bin, item[p]);
+	    // Define the new bin as a first irregular bin.
+	    //
+	    current_sect = ConvertToIRRBIN (current_bin);
 	    current_bin.add_IB (current_sect);
 	    bin_sol.push_back (current_bin);
 	    candidates.clear ();
 	    placed = true;
 	    pieces_placed++;
+	    //printf("Piece %d placed: %d\n",pieces_placed, item[p].getID());
 	  }
       }
+
+//    for (int i = 0; i < bin_sol.size (); i++)
+//      {
+//	BIN b = bin_sol[i];
+//	p_of = p_of + bin_sol[i].getPropUtil ();
+//	cout << "Bin:" << b.getID () << " Pieces: ";
+//	for (int j = 0; j < b.getPI ()->size (); j++)
+//	  {
+//	    PIEZA p = *(*b.getPI ())[j];
+//	    int IDpza = p.getID ();
+//	    cout << IDpza << " ";
+//	  }
+//
+//	cout << "\n";
+//      }
 
     vector<PIEZA> pzas;
     for (int i = 0; i < bin_sol[bin_sol.size () - 1].getPI ()->size (); i++)
@@ -822,8 +916,9 @@ namespace homogeneous_bs
       }
 
     LastBinRefinementGE (pzas, bin_sol[bin_sol.size () - 1]);
-    //Include pieces in the last bin as they have been repacked
-    //This part will not be needed for a normal run of the program. However, it is useful to have all information well updated.
+    // Include pieces in the last bin as they have been repacked
+    // This part will not be needed for a normal run of the program. However, it
+    // is useful to have all information well updated.
     //=================================================================
     double prop_repack = (bin_sol.back ()).getPropUtil ();
     int id_b = (bin_sol.back ()).getID ();

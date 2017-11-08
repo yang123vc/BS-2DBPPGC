@@ -246,7 +246,7 @@ namespace homogeneous_bs
     bool
     Fits_Bin (double L, double W)
     {
-      if (largo < L + TOL && ancho < W + TOL)
+      if (largo < L + HBS_TOL && ancho < W + HBS_TOL)
 	return true;
       else
 	return false;

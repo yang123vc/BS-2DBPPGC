@@ -7,16 +7,17 @@
 
 #include <boost/lexical_cast.hpp>
 #include <boost/program_options.hpp>
-#include <boost/filesystem.hpp>
 namespace po = boost::program_options;
+
+#include <boost/filesystem.hpp>
 namespace fs = boost::filesystem;
 
 #include <iostream>
 #include <iomanip>
 #include <fstream>
-#include <utility>
 #include <string>
 #include <vector>
+#include <utility>
 #include <unordered_map>
 using namespace std;
 
@@ -34,11 +35,11 @@ using namespace std;
 
 // the filter width and beam width parameters for the beam search algorithm
 //
-#define OP_FILTER_WIDTH  "filter-width"
-#define OPS_FILTER_WIDTH "f"
+#define OP_BIN_WIDTH  "filter-width"
+#define OPS_BIN_WIDTH "f"
 #define OPD_FILTER_WIDTH 2
 #define OP_BEAM_WIDTH    "beam-width"
-#define OPS_BEAM_WIDTH   "b"
+#define OPS_BIN_HEIGHT   "b"
 #define OPD_BEAM_WIDTH   3
 
 // the name of the file containing the pieces information
@@ -69,35 +70,33 @@ main (int argc, const char **argv)
   // setup command line options
   //
 
-  int filter_width;
   int beam_width;
+  int filter_width;
   string data_file_name;
   string output_file_name;
-  unordered_map<string, pair<double, double>> stock;
 
   po::options_description options ("Available options");
-  options.add_options ()
-      (OP_HELP "," OPS_HELP, "Print this help message")
-      (OP_FILTER_WIDTH "," OPS_FILTER_WIDTH,
-	  po::value<int>(&filter_width)->default_value(OPD_FILTER_WIDTH),
-	  "The filter width of the beam search algorithm")
-      (OP_BEAM_WIDTH "," OPS_BEAM_WIDTH,
-	  po::value<int>(&beam_width)->default_value(OPD_BEAM_WIDTH),
-	  "The beam width of the beam search algorithm")
-      (OP_DATA "," OPS_DATA, po::value<string> (&data_file_name),
-	  "The *.dat name of the file containing the input pieces information")
-      (OP_OUTPUT "," OPS_OUTPUT, po::value<string> (&output_file_name),
-	  "The *.tex name of the file where the resulting packing will be drawn")
-      (OP_VERBOSE "," OPS_VERBOSE, "Print verbose messages")
-      (OP_BINS, po::value<vector<string>>(),
-	  "The length and width of the stock bins. If there are two strings "
-	  "'<L> <W>' they are considered to be numeric values, and then the "
-	  "homogeneous beam search algorithm will be used using stock bins "
-	  "with length L and width W. If there are n > 2 strings, then they "
-	  "are considered to be of the form '<N_1> <L_1> <W_1> ...', and then "
-	  "the heterogeneous beam search algorithm will be used using n stock "
-	  "bins. The ith stock bin will have name N_i, length L_i, and width "
-	  "W_i.");
+  options.add_options () (OP_HELP "," OPS_HELP, "Print this help message") (
+      OP_BIN_WIDTH "," OPS_BIN_WIDTH,
+      po::value<int> (&filter_width)->default_value (OPD_FILTER_WIDTH),
+      "The filter width of the beam search algorithm") (
+      OP_BEAM_WIDTH "," OPS_BIN_HEIGHT,
+      po::value<int> (&beam_width)->default_value (OPD_BEAM_WIDTH),
+      "The beam width of the beam search algorithm") (
+      OP_DATA "," OPS_DATA, po::value<string> (&data_file_name),
+      "The *.dat name of the file containing the input pieces information") (
+      OP_OUTPUT "," OPS_OUTPUT, po::value<string> (&output_file_name),
+      "The *.tex name of the file where the resulting packing will be drawn") (
+      OP_VERBOSE "," OPS_VERBOSE, "Print verbose messages") (
+      OP_BINS, po::value<vector<string>> (),
+      "The length and width of the stock bins. If there are two strings "
+      "'<L> <W>' they are considered to be numeric values, and then the "
+      "homogeneous beam search algorithm will be used using stock bins "
+      "with length L and width W. If there are n > 2 strings, then they "
+      "are considered to be of the form '<N_1> <L_1> <W_1> ...', and then "
+      "the heterogeneous beam search algorithm will be used using n stock "
+      "bins. The ith stock bin will have name N_i, length L_i, and width "
+      "W_i.");
 
   po::positional_options_description p_options;
   p_options.add (OP_BINS, -1);
@@ -119,7 +118,6 @@ main (int argc, const char **argv)
 	  exit (EXIT_SUCCESS);
 	};
 
-
       //
       // reading options
       //
@@ -139,7 +137,6 @@ main (int argc, const char **argv)
 	  exit (EXIT_SUCCESS);
 	}
 
-
       //
       // check data option (required, string should be path pointing to a file)
       //
@@ -149,12 +146,11 @@ main (int argc, const char **argv)
 	  error ("missing required option --" OP_DATA);
 	}
 
-      if (!fs::exists(data_file_name) || !fs::is_regular(data_file_name))
+      if (!fs::exists (data_file_name) || !fs::is_regular (data_file_name))
 	{
 	  error ("option --" OP_DATA
-		 " should point to an existing regular file");
+	  " should point to an existing regular file");
 	}
-
 
       //
       // check data option (optional, string should be path pointing to a file)
@@ -168,14 +164,13 @@ main (int argc, const char **argv)
 	    }
 	}
 
-
       //
       // check bins stock specification (required, correct number of items)
       //
 
       // exist in command line?
       //
-      if (!vm.count(OP_BINS))
+      if (!vm.count (OP_BINS))
 	{
 	  error ("missing required option " OP_BINS);
 	}
@@ -184,18 +179,17 @@ main (int argc, const char **argv)
 
       // has at least two items?
       //
-      if (bins.size() < 2)
+      if (bins.size () < 2)
 	{
 	  error ("the number of bin parameters is not correct (n < 2)");
 	}
 
       // has the correct number of items?
       //
-      if (bins.size() > 2 && bins.size() % 3 != 0)
+      if (bins.size () > 2 && bins.size () % 3 != 0)
 	{
 	  error ("the number of bin parameters is not correct (n % 3 != 0)");
 	}
-
 
       //
       // executing beam search
@@ -216,13 +210,13 @@ main (int argc, const char **argv)
 	    {
 	      cout << "calling homogeneous beam search:" << endl;
 
-	      cout << left << setw(20) << "instance: ";
+	      cout << left << setw (20) << "instance: ";
 	      cout << "\"" << data_file_name << "\" " << endl;
 
-	      cout << left << setw(20) << "stock bins length:";
+	      cout << left << setw (20) << "stock bins length:";
 	      cout << width << endl;
 
-	      cout << left << setw(20) << "stock bins width:";
+	      cout << left << setw (20) << "stock bins width:";
 	      cout << length << endl << endl;
 	    }
 
@@ -233,35 +227,36 @@ main (int argc, const char **argv)
 	  // printing results to console
 	  //
 
-	  if (vm.count(OP_VERBOSE))
+	  if (vm.count (OP_VERBOSE))
 	    {
 	      cout << "results:" << endl;
 
-	      cout << left << setw(30) << "number of bins:";
+	      cout << left << setw (30) << "number of bins:";
 	      cout << bs_result.bins << endl;
 
-	      cout << left << setw(30) << "number of Bins (fractional):";
+	      cout << left << setw (30) << "number of Bins (fractional):";
 	      cout << bs_result.frac_bins << endl;
 
-	      cout << left << setw(30) << "Utilization (%):";
+	      cout << left << setw (30) << "Utilization (%):";
 	      cout << bs_result.utilization << endl;
 
-	      cout << left << setw(30) << "Running time (seconds):";
+	      cout << left << setw (30) << "Running time (seconds):";
 	      cout << bs_result.runtime << endl;
 	    }
 	  else
 	    {
-	      streamsize p = cout.precision();
-	      cout.precision(5);
+	      streamsize p = cout.precision ();
+	      cout.precision (5);
 
-	      cout << left << setw(15) << fs::path(data_file_name).filename().string();
-	      cout << left << setw(10) << bs_result.bins;
-	      cout << left << setw(10) << bs_result.frac_bins;
-	      cout << left << setw(10) << bs_result.utilization;
-	      cout << left << setw(10) << bs_result.runtime;
+	      cout << left << setw (15)
+		  << fs::path (data_file_name).filename ().string ();
+	      cout << left << setw (10) << bs_result.bins;
+	      cout << left << setw (10) << bs_result.frac_bins;
+	      cout << left << setw (10) << bs_result.utilization;
+	      cout << left << setw (10) << bs_result.runtime;
 	      cout << endl;
 
-	      cout.precision(p);
+	      cout.precision (p);
 	    }
 
 	  //
@@ -284,13 +279,16 @@ main (int argc, const char **argv)
 	  // and width.
 	  //
 
+	  heterogeneous_bs::stock_names stock_names;
+	  heterogeneous_bs::stock_sizes stock_sizes;
+
 	  // constructing stock specification map
 	  //
-	  for (std::vector<string>::const_iterator it = bins.begin ();
+	  for (vector<string>::const_iterator it = bins.begin ();
 	      it != bins.end ();)
 	    {
 	      const string &name = *(it++);
-	      if (stock.count (name) > 0)
+	      if (stock_sizes.count (name) > 0)
 		{
 		  cout << "repeated bin name '" << name << "'" << endl;
 		  cout << options << endl;
@@ -300,25 +298,152 @@ main (int argc, const char **argv)
 	      double length = boost::lexical_cast<double> (*(it++));
 	      double width = boost::lexical_cast<double> (*(it++));
 
-	      stock[name] = std::make_pair (length, width);
+	      stock_names.push_back(name);
+	      stock_sizes[name] = std::make_pair (length, width);
 	    }
 
 	  if (vm.count (OP_VERBOSE))
 	    {
 	      cout << "calling heterogeneous beam search:" << endl;
 
-	      cout << left << setw(12) << "instance: ";
+	      cout << left << setw (12) << "instance: ";
 	      cout << "\"" << data_file_name << "\" " << endl;
 
 	      cout << "stock bins:" << endl;
-	      for_each (stock.begin (), stock.end (), [](auto &el)
+	      for (size_t i = 0; i < stock_names.size (); i++)
 		{
-		  cout << right << setw(19) << "label: "<< left << setw(10)
-		      << el.first;
-		  cout << "length: " << left << setw(15) << el.second.first;
-		  cout << "width: " << left << setw(15) << el.second.second
-		      << endl;
-		});
+		  cout << right << setw (16) << "id: " << left << setw (5) << i;
+		  cout << "label: " << left << setw (10) << stock_names[i];
+		  cout << "length: " << left << setw (10)
+		      << stock_sizes[stock_names[i]].first;
+		  cout << "width: " << left << setw (10)
+		      << stock_sizes[stock_names[i]].second << endl;
+		}
+	    }
+
+	  TREE bs_sol;
+	  auto bs_result = heterogeneous_bs::beam_search (
+	      data_file_name, make_pair (stock_names, stock_sizes), bs_sol);
+
+	  //
+	  // printing results to console
+	  //
+
+	  auto print_sol_branch = [] (ostream &out, list<NODE> &branch)
+	    {
+	      auto it = branch.begin ();
+	      auto it_last = --branch.end ();
+
+	      cout << "[";
+	      while (it != it_last)
+		{
+		  out << (*(it++)).getSize () << " - ";
+		}
+	      out << (*it).getSize () << " ]";
+	    };
+
+	  if (vm.count (OP_VERBOSE))
+	    {
+	      cout << "results:" << endl;
+
+	      //
+	      // best global evaluation
+	      //
+
+	      cout << left << setw (30) << "BGE level:";
+	      cout << get<BGE_LEVEL>(bs_result) << endl;
+
+	      cout << left << setw (30) << "BGE number of bins:";
+	      cout << get<BGE_BINS_NO>(bs_result) << endl;
+
+	      cout << left << setw (30) << "BGE utilization (%):";
+	      cout << get<BGE_UTILIZATION>(bs_result) << endl;
+
+	      cout << left << setw (30) << "BGE solution branch:";
+		{
+		  vector<NODE> &branch = (vector<NODE> &) get<BGE_SOL_BRANCH> (
+		      bs_result);
+
+		  auto it = branch.begin ();
+		  auto it_last = --branch.end ();
+
+		  cout << "[";
+		  while (it < it_last)
+		    {
+		      cout << (*(it++)).getSize () << " - ";
+		    }
+		  cout << (*it).getSize () << " ]";
+		}
+	      cout << endl;
+
+	      //
+	      // solution
+	      //
+
+	      cout << left << setw (30) << "Solution level:";
+
+	      cout << get<SOL_LEVEL> (bs_result) << endl;
+
+	      cout << left << setw (30) << "Solution fractional number of bins:";
+	      cout << get<SOL_BINS_FRAC> (bs_result) << endl;
+
+	      cout << left << setw (30) << "Solution utilization (%):";
+	      cout << get<SOL_UTILIZATION> (bs_result) << endl;
+
+	      cout << left << setw (30) << "Solution AreaPz:";
+	      cout << get<SOL_AREA_PZ> (bs_result) << endl;
+
+	      cout << left << setw (30) << "Solution branch:";
+	      print_sol_branch (cout,
+				(list<NODE> &) get<SOL_BRANCH> (bs_result));
+	      cout << endl;
+
+	      cout << left << setw (30) << "Running time (seconds):";
+	      cout << get<RUNTIME>(bs_result) << endl;
+	    }
+	  else
+	    {
+	      streamsize p = cout.precision ();
+	      cout.precision (5);
+
+	      cout << left << setw (15)
+		  << fs::path (data_file_name).filename ().string ();
+
+	      // only printing solution
+	      //
+	      cout << left << setw (10) << get<SOL_LEVEL>(bs_result);
+	      cout << left << setw (10) << get<SOL_BINS_FRAC>(bs_result);
+	      cout << left << setw (10) << get<SOL_UTILIZATION>(bs_result);
+	      cout << left << setw (15) << get<SOL_AREA_PZ>(bs_result);
+	      print_sol_branch (cout,
+				(list<NODE> &) get<SOL_BRANCH> (bs_result));
+	      cout << right << setw (10) << get<RUNTIME>(bs_result);
+	      cout << endl;
+
+	      cout.precision (p);
+	    }
+
+	  //
+	  // printing results to *.tex
+	  //
+
+	  if (vm.count (OP_OUTPUT))
+	    {
+	      try
+		{
+		  PrintSolution (output_file_name,
+				 get<SOL_BRANCH> (bs_result),
+				 get<RUNTIME> (bs_result),
+				 get<SOL_AREA_PZ> (bs_result));
+		}
+	      catch (const bad_alloc &ba)
+		{
+		  std::cerr << "bad_alloc caught: " << ba.what () << endl;
+		}
+	      catch (const exception &e)
+		{
+		  std::cerr << "exception caught: " << e.what () << endl;
+		}
 	    }
 	}
     }

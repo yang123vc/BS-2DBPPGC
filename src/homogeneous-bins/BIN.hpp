@@ -66,7 +66,7 @@ namespace homogeneous_bs
 
     // crea el ID del bin
     //
-    inline void
+    void
     setID (int id)
     {
       this->ID = id;
@@ -85,17 +85,17 @@ namespace homogeneous_bs
     void
     setDim (const string &file_name);
 
-    inline double
+    double
     getL ()
     {
       return this->L;
     }
-    inline double
+    double
     getW ()
     {
       return this->W;
     }
-    inline double
+    double
     get_waste ()
     {
       return this->waste;
@@ -113,24 +113,24 @@ namespace homogeneous_bs
 
     // calcula el area libre
     //
-    inline void
+    void
     setWaste (PIEZA &p)
     {
       waste = waste - p.getArea ();
     }
     // Calcula la proporción utilizada
     //
-    inline void
+    void
     setPropUtil ()
     {
       prop_utilizada = 1 - waste / (L * W);
     }
-    inline double
+    double
     getPropUtil ()
     {
       return prop_utilizada;
     }
-    inline int
+    int
     getNumPiezas ()
     {
       return num_piezas;
@@ -138,20 +138,20 @@ namespace homogeneous_bs
     void
     include_piece (PIEZA &p);
 
-    inline void
+    void
     add_GC (EDGES e)
     {
       e.mod = -1;
       GC.insert (GC.begin (), e);
     }
 
-    inline vector<EDGES> *
+    vector<EDGES> *
     getGC ()
     {
       return (&GC);
     }
 
-    inline vector<PIEZA*> *
+    vector<PIEZA*> *
     getPI ()
     {
       return (&piezas_incluidas);
@@ -160,20 +160,20 @@ namespace homogeneous_bs
     void
     empty_bin ();
 
-    inline void
+    void
     add_IB (IRR_BIN &ib)
     {
       num_sect++;
       section.push_back (ib);
     }
 
-    inline int
+    int
     getNumSect ()
     {
       return num_sect;
     }
 
-    inline IRR_BIN
+    IRR_BIN
     get_ib (int id_ib)
     {
       int i = 0;
@@ -197,7 +197,7 @@ namespace homogeneous_bs
     void
     add_piece_SectToBin (IRR_BIN ib);
 
-    inline void
+    void
     FixUtil (double util)
     {
       prop_utilizada = util;

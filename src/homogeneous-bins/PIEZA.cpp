@@ -44,7 +44,7 @@ namespace homogeneous_bs
     bin = -1; //La pieza no ha sido asignada a ningun bin
     set_placed (bin);
     area = calcular_area_exacta (puntos_angulo_inicial);
-    double maxX = -GRANDE, minX = GRANDE, maxY = -GRANDE, minY = GRANDE;
+    double maxX = -HBS_GRANDE, minX = HBS_GRANDE, maxY = -HBS_GRANDE, minY = HBS_GRANDE;
     //Calcula las coordenadas del menor rectángulo que contiene a la pieza
     for (int i = 0; i < puntos_angulo_usado.size (); i++)
       {
@@ -104,8 +104,8 @@ namespace homogeneous_bs
   PIEZA::obtener_rotacion (double angulo_a_rotar)
   {
     // CALCULAMOS COORDENADAS DE LA PIEZA EN LO DIFERENTES ANGULOS:
-    double angulo_aux = 2 * PI * angulo_a_rotar / 360;	//Convertir a rads.
-    double xmin = GRANDE, xmax = -GRANDE, ymin = GRANDE, ymax = -GRANDE;
+    double angulo_aux = 2 * HBS_PI * angulo_a_rotar / 360;	//Convertir a rads.
+    double xmin = HBS_GRANDE, xmax = -HBS_GRANDE, ymin = HBS_GRANDE, ymax = -HBS_GRANDE;
     PUNTO p_aux;
     p_aux.coordx = -1;
     p_aux.coordy = -1;
@@ -120,36 +120,36 @@ namespace homogeneous_bs
 	    puntos_angulo_inicial[i].coordx * puntos_angulo_inicial[i].coordx
 		+ puntos_angulo_inicial[i].coordy
 		    * puntos_angulo_inicial[i].coordy);
-	double tita = PI / 2; // SI x=0 :: y>0
-	if (modulo < TOL && modulo > -TOL)
+	double tita = HBS_PI / 2; // SI x=0 :: y>0
+	if (modulo < HBS_TOL && modulo > -HBS_TOL)
 	  tita = 0;
 	else
 	  {
-	    if (puntos_angulo_inicial[i].coordx < TOL
-		&& puntos_angulo_inicial[i].coordx > -TOL
-		&& puntos_angulo_inicial[i].coordy < -TOL) // SI x=0 :: y<0
+	    if (puntos_angulo_inicial[i].coordx < HBS_TOL
+		&& puntos_angulo_inicial[i].coordx > -HBS_TOL
+		&& puntos_angulo_inicial[i].coordy < -HBS_TOL) // SI x=0 :: y<0
 	      {
-		tita = 3 * PI / 2;
+		tita = 3 * HBS_PI / 2;
 	      }
-	    if (puntos_angulo_inicial[i].coordx > TOL
+	    if (puntos_angulo_inicial[i].coordx > HBS_TOL
 		&& puntos_angulo_inicial[i].coordy >= 0) // SI x>0 :: y>=0
 	      {
 		tita = atan (
 		    puntos_angulo_inicial[i].coordy
 			/ puntos_angulo_inicial[i].coordx);
 	      }
-	    if (puntos_angulo_inicial[i].coordx > TOL
-		&& puntos_angulo_inicial[i].coordy < -TOL) // SI x>0 :: y<0
+	    if (puntos_angulo_inicial[i].coordx > HBS_TOL
+		&& puntos_angulo_inicial[i].coordy < -HBS_TOL) // SI x>0 :: y<0
 	      {
 		tita = atan (
 		    puntos_angulo_inicial[i].coordy
-			/ puntos_angulo_inicial[i].coordx) + 2 * PI;
+			/ puntos_angulo_inicial[i].coordx) + 2 * HBS_PI;
 	      }
-	    if (puntos_angulo_inicial[i].coordx < -TOL) // SI x<0
+	    if (puntos_angulo_inicial[i].coordx < -HBS_TOL) // SI x<0
 	      {
 		tita = atan (
 		    puntos_angulo_inicial[i].coordy
-			/ puntos_angulo_inicial[i].coordx) + PI;
+			/ puntos_angulo_inicial[i].coordx) + HBS_PI;
 	      }
 	  }
 
@@ -209,10 +209,10 @@ namespace homogeneous_bs
     bool simetria = true;
     for (int i = 0; i < n_p; i++)
       {
-	if (pppp[i].coordx < v_anterior[i].coordx - TOL
-	    || pppp[i].coordx > v_anterior[i].coordx + TOL
-	    || pppp[i].coordy < v_anterior[i].coordy - TOL
-	    || pppp[i].coordy > v_anterior[i].coordy + TOL)
+	if (pppp[i].coordx < v_anterior[i].coordx - HBS_TOL
+	    || pppp[i].coordx > v_anterior[i].coordx + HBS_TOL
+	    || pppp[i].coordy < v_anterior[i].coordy - HBS_TOL
+	    || pppp[i].coordy > v_anterior[i].coordy + HBS_TOL)
 	  {
 	    simetria = false;
 	    break;
@@ -264,7 +264,7 @@ namespace homogeneous_bs
     puntos_angulo_usado.assign (n_p, p_aux);
     int pos_min_X = -1;
 
-    double xmin = GRANDE, xmax = -GRANDE, ymin = GRANDE, ymax = -GRANDE;
+    double xmin = HBS_GRANDE, xmax = -HBS_GRANDE, ymin = HBS_GRANDE, ymax = -HBS_GRANDE;
     for (int i = 0; i < n_p; i++)
       {
 	PUNTO pp;
@@ -301,14 +301,14 @@ namespace homogeneous_bs
     // COMENZAMOS A ESCRIBIR CON EL VERTICE DE MENOR COORDENADA X:
     //============================================================
     //Buscamos la posición del punto con menor X (y en caso de empate, menor Y)
-    xmin = GRANDE, xmax = -GRANDE, ymin = GRANDE, ymax = -GRANDE;
+    xmin = HBS_GRANDE, xmax = -HBS_GRANDE, ymin = HBS_GRANDE, ymax = -HBS_GRANDE;
     for (int i = 0; i < n_p; i++)
       {
 	PUNTO pp;
 	pp = puntos_angulo_usado[i];
 	if (xmin >= pp.coordx)
 	  {
-	    if (equal_double (xmin, pp.coordx, TOL))
+	    if (equal_double (xmin, pp.coordx, HBS_TOL))
 	      {
 		if (ymin > pp.coordy)
 		  {
@@ -349,10 +349,10 @@ namespace homogeneous_bs
     bool simetria = true;
     for (int i = 0; i < n_p; i++)
       {
-	if (pppp[i].coordx < v_anterior[i].coordx - TOL
-	    || pppp[i].coordx > v_anterior[i].coordx + TOL
-	    || pppp[i].coordy < v_anterior[i].coordy - TOL
-	    || pppp[i].coordy > v_anterior[i].coordy + TOL)
+	if (pppp[i].coordx < v_anterior[i].coordx - HBS_TOL
+	    || pppp[i].coordx > v_anterior[i].coordx + HBS_TOL
+	    || pppp[i].coordy < v_anterior[i].coordy - HBS_TOL
+	    || pppp[i].coordy > v_anterior[i].coordy + HBS_TOL)
 	  {
 	    simetria = false;
 	    break;
